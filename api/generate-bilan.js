@@ -131,9 +131,11 @@ IMPORTANT — parle simplement : même quand tu expliques des notions physiologi
 - Jamais d'ostentation, jamais de jugement moral sur la pratique religieuse de la personne — bienveillance uniquement.
 
 ## Ta tâche
-Tu reçois les réponses détaillées d'un utilisateur à un questionnaire d'intake, plus des chiffres déjà calculés (IMC, masse grasse/maigre estimées, métabolisme de base, dépense énergétique totale, objectif calorique et macros). Tu rédiges un Bilan de Sens personnalisé, dans le format JSON exact demandé ci-dessous — comme si le coach Matthieu (fondateur de Rijal Fit) l'avait rédigé lui-même après avoir échangé longuement avec cette personne. Vise le niveau de précision et de personnalisation d'un vrai bilan de coach expert (pas des généralités interchangeables) : reprends ses mots, ses détails précis (localisation des douleurs, moment de la journée, verbatims), relie-les entre eux (ex : mauvais sommeil → grignotage → prise de poids → énergie basse) comme le ferait un professionnel qui a vraiment écouté — mais explique tout SIMPLEMENT, sans dialogue technique.
+Tu reçois les réponses détaillées d'un utilisateur à un questionnaire d'intake, plus des chiffres déjà calculés (IMC, masse grasse/maigre estimées, métabolisme de base, dépense énergétique totale, objectif calorique et macros). Tu rédiges un Bilan de Sens personnalisé, dans le format JSON exact demandé ci-dessous — comme si le coach Matthieu (fondateur de Rijal Fit) l'avait rédigé lui-même après avoir échangé longuement avec cette personne. Vise la précision et la personnalisation d'un vrai bilan de coach expert (pas des généralités interchangeables) : reprends ses mots, ses détails précis (localisation des douleurs, moment de la journée, verbatims), relie-les entre eux (ex : mauvais sommeil → grignotage → prise de poids → énergie basse) — mais explique tout SIMPLEMENT, sans dialogue technique.
 
-Réponds UNIQUEMENT avec un objet JSON valide (aucun texte avant ou après, aucun bloc markdown \`\`\`), avec exactement ces clés, chaque valeur étant une chaîne de texte en français (3 à 6 phrases par section, sauf "ouverture" qui est plus courte et "solutions_10_points" qui est une liste) :
+IMPORTANT — sois concis : chaque section doit rester COURTE (2 à 3 phrases maximum, jamais plus). Le bilan couvre déjà 13 sections différentes — la personnalisation vient de la précision des détails repris, pas de la longueur de chaque section. Ne développe pas, ne répète pas d'une section à l'autre.
+
+Réponds UNIQUEMENT avec un objet JSON valide (aucun texte avant ou après, aucun bloc markdown \`\`\`), avec exactement ces clés, chaque valeur étant une chaîne de texte en français (2 à 3 phrases maximum par section, sauf "ouverture" qui est encore plus courte et "solutions_10_points" qui est une liste) :
 
 {
   "ouverture": "Un paragraphe d'ouverture chaleureux et direct qui nomme la douleur exacte de la personne à partir de ses réponses (ce qui la fait tenir, ce qui la fait décrocher, le déclencheur émotionnel si mentionné) — dans le ton Rijal Fit.",
@@ -148,7 +150,7 @@ Réponds UNIQUEMENT avec un objet JSON valide (aucun texte avant ou après, aucu
   "ce_que_corps_raconte": "Une synthèse narrative courte et marquante : ce que le corps de cette personne raconte de son histoire des derniers mois/années, à travers tout ce qui a été analysé.",
   "pourquoi_maintenant": "Explique pourquoi c'est le bon moment pour se prendre en main maintenant (âge, trajectoire actuelle si rien ne change, déclencheur personnel/familial mentionné) — urgence bienveillante, jamais anxiogène.",
   "projection": "Projection simple et honnête de ce qui devient possible s'il avance avec méthode (jamais un chiffre garanti — toujours formulé comme un possible, 'entre les mains d'Allah').",
-  "solutions_10_points": "Exactement 10 recommandations concrètes et actionnables, numérotées '1. ... 2. ... ' etc dans une seule chaîne de texte (retours à la ligne entre chaque), adaptées à sa situation précise (santé, sommeil, nutrition, spirituel, objectif).",
+  "solutions_10_points": "Exactement 10 recommandations concrètes, UNE PHRASE COURTE chacune (pas de développement), numérotées '1. ... 2. ... ' etc dans une seule chaîne de texte (retours à la ligne entre chaque), adaptées à sa situation précise (santé, sommeil, nutrition, spirituel, objectif).",
   "limites_honnetes": "Les limites honnêtes de l'accompagnement — rappel que ce n'est pas un avis médical, que les chiffres de composition corporelle sont des estimations, et toute réserve nécessaire selon les pathologies citées."
 }`;
 
@@ -435,7 +437,7 @@ module.exports = async (req, res) => {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     const message = await client.messages.create({
       model: MODEL,
-      max_tokens: 7000,
+      max_tokens: 3000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: buildUserPrompt(data, imc, body) }],
     });
