@@ -1,10 +1,6 @@
 {
   "name": "bilan-sens-rijalfit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Rijal Fit — Bilan de Sens auto-généré (formulaire + PDF via l'API Claude).",
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
-    "pdfkit": "^0.15.1"
-  }
+  "description": "Rijal Fit — Diagnostic de Réalignement (quiz scoré, sans IA) + capture de leads."
 }

@@ -6,10 +6,7 @@ function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      'Date', 'Prénom', 'Nom', 'Email', 'Téléphone',
-      'Métier', 'Décide seul ou à deux', 'Temps/semaine', 'Horizon', 'Objectif principal',
-    ]);
+    sheet.appendRow(['Date', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Score', 'Zone']);
   }
 
   var data = JSON.parse(e.postData.contents);
@@ -20,11 +17,8 @@ function doPost(e) {
     data.nom || '',
     data.email || '',
     data.telephone || '',
-    data.profession || '',
-    data.autonomie_decision || '',
-    data.temps_semaine || '',
-    data.horizon || '',
-    data.objectif_principal || '',
+    data.score || '',
+    data.zone || '',
   ]);
 
   return ContentService
