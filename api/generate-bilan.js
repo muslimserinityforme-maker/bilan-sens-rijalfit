@@ -473,8 +473,23 @@ module.exports = async (req, res) => {
       .map((block) => block.text)
       .join('\n');
 
-    const bilanA = JSON.parse(extractJson(textOf(messageA)));
-    const bilanB = JSON.parse(extractJson(textOf(messageB)));
+    const textA = textOf(messageA);
+    const textB = textOf(messageB);
+
+    let bilanA;
+    let bilanB;
+    try {
+      bilanA = JSON.parse(extractJson(textA));
+    } catch (parseErr) {
+      console.error('generate-bilan: JSON invalide côté A. stop_reason=', messageA.stop_reason, 'RAW_A=', textA.slice(0, 2000));
+      throw parseErr;
+    }
+    try {
+      bilanB = JSON.parse(extractJson(textB));
+    } catch (parseErr) {
+      console.error('generate-bilan: JSON invalide côté B. stop_reason=', messageB.stop_reason, 'RAW_B=', textB.slice(0, 2000));
+      throw parseErr;
+    }
     bilan = Object.assign({}, bilanA, bilanB);
   } catch (err) {
     console.error('generate-bilan: échec de la génération', err);
