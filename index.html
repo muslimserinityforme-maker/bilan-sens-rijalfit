@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bilan de Sens — Rijal Fit</title>
+  <meta name="description" content="Réponds à quelques questions et reçois ton Bilan de Sens personnalisé — la première étape de la Méthode du Réalignement." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero__inner">
+      <p class="hero__label">Rijal Fit · Bilan de Sens</p>
+      <h1 class="hero__title">Avant le programme, le pourquoi.</h1>
+      <p class="hero__sub">
+        Ce bilan est réservé aux hommes sérieux, prêts à regarder leur situation en face. Réponds honnêtement — ton Bilan de Sens personnalisé sera généré en quelques instants, en PDF.
+      </p>
+      <p class="hero__reassurance">Gratuit · 5 minutes · Confidentiel</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ═══ ÉTAPE 0 — Porte d'entrée ═══ -->
+    <section id="step-gate" class="form-section">
+      <h2 class="form-section__title">Avant de commencer</h2>
+      <p class="step-intro">Ce bilan est nominatif et confidentiel — tes informations ne servent qu'à générer ton bilan et, si tu le souhaites, à ce qu'on puisse te recontacter.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="prenom">Prénom *</label>
+          <input type="text" id="prenom" name="prenom" required />
+        </div>
+        <div class="field">
+          <label for="nom">Nom *</label>
+          <input type="text" id="nom" name="nom" required />
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="field">
+          <label for="telephone">Téléphone *</label>
+          <input type="tel" id="telephone" name="telephone" required />
+        </div>
+      </div>
+
+      <div class="field field--checkbox">
+        <label>
+          <input type="checkbox" id="consentement" name="consentement" required />
+          J'accepte que ces informations soient utilisées pour générer mon Bilan de Sens et pour être recontacté à ce sujet. *
+        </label>
+      </div>
+
+      <div class="form-submit">
+        <button type="button" id="gate-continue" class="btn btn--primary btn--large">Continuer</button>
+        <p id="gate-error" class="form-error" role="alert" hidden></p>
+      </div>
+    </section>
+
+    <!-- ═══ ÉTAPE 1 — Les 10 questions ═══ -->
+    <form id="bilan-form" novalidate hidden>
+
+      <section class="form-section">
+        <h2 class="form-section__title">1. Qu'est-ce qui t'a poussé à faire ce bilan aujourd'hui ?</h2>
+        <div class="field">
+          <label for="objectif_principal">Quel est ton objectif principal ? *</label>
+          <textarea id="objectif_principal" name="objectif_principal" rows="2" required placeholder="Ex : retrouver mon énergie, être régulier dans mes prières, perdre du poids..."></textarea>
+        </div>
+        <div class="field">
+          <label for="objectif_corporel">Quel type de changement corporel recherches-tu en priorité ?</label>
+          <select id="objectif_corporel" name="objectif_corporel">
+            <option value="perte de graisse">Perdre du gras</option>
+            <option value="prise de muscle">Prendre du muscle</option>
+            <option value="recomposition">Les deux à la fois (recomposition)</option>
+            <option value="maintien">Me maintenir / stabiliser</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">2. Ton profil</h2>
+        <div class="field-row">
+          <div class="field">
+            <label for="age">Âge *</label>
+            <input type="number" id="age" name="age" min="14" max="100" required />
+          </div>
+          <div class="field">
+            <label for="taille_cm">Taille (cm) *</label>
+            <input type="number" id="taille_cm" name="taille_cm" min="120" max="230" required />
+          </div>
+          <div class="field">
+            <label for="poids_kg">Poids (kg) *</label>
+            <input type="number" id="poids_kg" name="poids_kg" min="35" max="250" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="poids_il_y_a_2_ans">Ton poids il y a 2 ans (si tu t'en souviens)</label>
+          <input type="number" id="poids_il_y_a_2_ans" name="poids_il_y_a_2_ans" min="35" max="250" placeholder="En kg — laisse vide si tu ne sais pas" />
+        </div>
+        <div class="field">
+          <label for="niveau_activite">Ton niveau d'activité physique au quotidien</label>
+          <select id="niveau_activite" name="niveau_activite">
+            <option value="sédentaire">Sédentaire — bureau/écran, peu de mouvement</option>
+            <option value="modéré">Modéré — je bouge un peu (marche, métier actif par moments)</option>
+            <option value="actif">Actif — métier physique ou sport régulier</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">3. Ta santé, ta posture et ta morphologie</h2>
+        <div class="field">
+          <label for="sante">As-tu des pathologies connues ou des douleurs physiques actuelles ? Précise la localisation et depuis quand *</label>
+          <textarea id="sante" name="sante" rows="3" required placeholder="Ex : douleurs bas du dos depuis 3 ans, genou gauche qui tire au squat, tensions nuque après écran... Écris 'aucune' si rien à signaler"></textarea>
+        </div>
+        <div class="field">
+          <label for="posture">Comment décrirais-tu ta posture au quotidien ?</label>
+          <select id="posture" name="posture">
+            <option value="bonne">Plutôt bonne — je ne remarque rien de particulier</option>
+            <option value="voûté">Voûté / affaissé, surtout devant un écran</option>
+            <option value="cambré">Dos cambré</option>
+            <option value="ne sais pas">Je ne sais pas trop</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="morphotype">Ta silhouette naturelle (avant toute prise de poids)</label>
+            <select id="morphotype" name="morphotype">
+              <option value="ectomorphe">Plutôt fin, j'ai toujours eu du mal à prendre du poids/muscle</option>
+              <option value="mésomorphe">Plutôt musclé naturellement, je prends facilement du muscle</option>
+              <option value="endomorphe">Plutôt large, je prends facilement du poids</option>
+              <option value="ne sais pas">Je ne sais pas trop</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="type_ventre">Où se situe principalement ta prise de poids ?</label>
+            <select id="type_ventre" name="type_ventre">
+              <option value="ventre">Le ventre surtout</option>
+              <option value="généralisé">Assez uniforme sur tout le corps</option>
+              <option value="hanches">Hanches / bas du corps</option>
+              <option value="ne sais pas">Je ne sais pas trop</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">4. Ton sommeil et ton énergie</h2>
+        <div class="field">
+          <label for="qualite_sommeil">Comment décrirais-tu ton sommeil ?</label>
+          <select id="qualite_sommeil" name="qualite_sommeil">
+            <option value="bon">Bon — je récupère correctement</option>
+            <option value="moyen">Moyen — parfois réparateur, parfois non</option>
+            <option value="fragmenté">Fragmenté — je me réveille souvent</option>
+            <option value="mauvais">Mauvais — je ne récupère presque jamais</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="heures_sommeil">Nombre d'heures de sommeil en moyenne</label>
+            <input type="number" id="heures_sommeil" name="heures_sommeil" min="1" max="14" step="0.5" />
+          </div>
+          <div class="field">
+            <label for="endormissement">Ton endormissement</label>
+            <select id="endormissement" name="endormissement">
+              <option value="facile">Facile</option>
+              <option value="difficile">Difficile — rumination, pensées qui tournent</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="energie">Ton niveau d'énergie au quotidien, de 1 à 10 *</label>
+          <input type="range" id="energie" name="energie" min="1" max="10" value="5" required />
+          <output id="energie-value" for="energie">5 / 10</output>
+        </div>
+        <div class="field">
+          <label for="pattern_energie">À quel moment de la journée ressens-tu le plus le manque d'énergie ?</label>
+          <input type="text" id="pattern_energie" name="pattern_energie" placeholder="Ex : dès le réveil, coup de barre après le déjeuner..." />
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">5. Ton alimentation</h2>
+        <div class="field">
+          <label for="alimentation_type">Décris une journée alimentaire type (matin, midi, goûter, soir)</label>
+          <textarea id="alimentation_type" name="alimentation_type" rows="3" placeholder="Ex : café + tartines le matin, sandwich rapide le midi, grignotage l'après-midi, tajine/riz le soir..."></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="hydratation">Ton hydratation</label>
+            <select id="hydratation" name="hydratation">
+              <option value="suffisante">Suffisante — je bois régulièrement de l'eau</option>
+              <option value="insuffisante">Insuffisante — surtout café/thé</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rapport_nourriture">Ton rapport à la nourriture sous stress</label>
+            <select id="rapport_nourriture" name="rapport_nourriture">
+              <option value="normal">Je mange normalement, sans lien particulier au stress</option>
+              <option value="grignotage">Je grignote / mange plus quand je suis stressé ou fatigué</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="intolerances">Intolérances ou restrictions alimentaires connues</label>
+          <input type="text" id="intolerances" name="intolerances" placeholder="Ex : lactose, gluten... Laisse vide si aucune" />
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">6. Ce que tu as déjà essayé</h2>
+        <div class="field">
+          <label for="tentatives_passees">As-tu déjà essayé de résoudre cette situation par toi-même (programme, régime, coach...) ? Qu'est-ce qui a tenu, qu'est-ce qui n'a pas tenu, et pourquoi ? *</label>
+          <textarea id="tentatives_passees" name="tentatives_passees" rows="3" required placeholder="Ex : j'ai tenu 3 semaines, puis une période chargée au travail et j'ai tout arrêté..."></textarea>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">7. Ton métier</h2>
+        <div class="field">
+          <label for="profession">Qu'est-ce que tu fais dans la vie (métier / activité) ?</label>
+          <input type="text" id="profession" name="profession" />
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">8. Ta famille</h2>
+        <div class="field">
+          <label for="situation_familiale">Ta situation familiale</label>
+          <select id="situation_familiale" name="situation_familiale">
+            <option value="célibataire">Célibataire</option>
+            <option value="marié sans enfants">Marié, sans enfants</option>
+            <option value="marié avec enfants">Marié, avec enfants</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="vie_famille">Comment te sens-tu aujourd'hui comme mari/père (si applicable) ?</label>
+          <textarea id="vie_famille" name="vie_famille" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="declencheur">Y a-t-il un moment précis — une remarque, un regard, une situation — qui t'a marqué et qui te pousse à agir aujourd'hui ?</label>
+          <textarea id="declencheur" name="declencheur" rows="2" placeholder="Ex : une remarque de mon épouse, un moment avec mes enfants où j'ai senti mes limites physiques..."></textarea>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">9. Ta pratique religieuse</h2>
+        <div class="field">
+          <label for="difficulte_prieres">As-tu des difficultés avec tes prières à cause de ta forme physique ou de ton énergie ? Lesquelles ?</label>
+          <textarea id="difficulte_prieres" name="difficulte_prieres" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="gene_priere">Ressens-tu une gêne physique pendant la prière (par exemple en sujood) ?</label>
+          <select id="gene_priere" name="gene_priere">
+            <option value="non">Non, aucune gêne</option>
+            <option value="oui">Oui, une gêne physique pendant la prière</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">10. Ta façon de décider</h2>
+        <div class="field">
+          <label>Pour ce type de démarche personnelle, es-tu quelqu'un qui décide seul, ou est-ce une décision que tu prends avec ton épouse / tes proches ? *</label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="autonomie_decision" value="seul" required /> Je décide seul</label>
+            <label class="radio-option"><input type="radio" name="autonomie_decision" value="à deux" /> C'est une décision à deux / en famille</label>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="form-section__title">11. Ton engagement</h2>
+        <div class="field">
+          <label for="temps_semaine">Si une solution adaptée à ta situation existait, combien de temps par semaine serais-tu prêt à y consacrer ?</label>
+          <select id="temps_semaine" name="temps_semaine">
+            <option value="moins de 2h/semaine">Moins de 2h / semaine</option>
+            <option value="2 à 4h/semaine">2 à 4h / semaine</option>
+            <option value="4 à 6h/semaine">4 à 6h / semaine</option>
+            <option value="plus de 6h/semaine">Plus de 6h / semaine</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="horizon">Sur quel horizon veux-tu voir ce changement ?</label>
+          <select id="horizon" name="horizon">
+            <option value="3 mois">3 mois</option>
+            <option value="6 mois">6 mois</option>
+            <option value="1 an">1 an</option>
+          </select>
+        </div>
+      </section>
+
+      <div class="form-submit">
+        <button type="submit" id="submit-btn" class="btn btn--primary btn--large">
+          Générer mon Bilan de Sens (PDF)
+        </button>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+      </div>
+
+    </form>
+
+    <div id="loading-state" class="state-panel" hidden>
+      <p class="state-panel__title">Ton Bilan de Sens est en cours de rédaction...</p>
+      <p class="state-panel__sub">On identifie la vraie racine de ton blocage. Quelques instants.</p>
+    </div>
+
+    <div id="success-state" class="state-panel" hidden>
+      <p class="state-panel__title">Ton Bilan de Sens est prêt.</p>
+      <p class="state-panel__sub">Télécharge-le, prends le temps de le lire — puis, si tu veux qu'on en parle, réserve un appel découverte.</p>
+      <a id="download-link" class="btn btn--primary btn--large" download>Télécharger mon Bilan (PDF)</a>
+      <a href="https://calendly.com/muslimserinityforme/programme-ton-bilan-intermediaire" target="_blank" rel="noopener" class="btn btn--secondary">Réserver mon appel découverte</a>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__brand">Rijal Fit</p>
+      <p class="footer__sub">Coach Réalignement Corps &amp; Foi</p>
+      <p class="footer__ctp">Membre du <a href="https://entrepreneur-musulman.com" target="_blank" rel="noopener">Collectif Tariqa PRO</a></p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/generate-bilan.js": {
+      "maxDuration": 60
+    }
+  }
+}
