@@ -1,8 +1,10 @@
 (function () {
   const QUESTIONS = [
     {
-      title: "Au réveil, quelle est ton énergie réelle ?",
+      title: "Au réveil, quelle est ton énergie réelle ?",
       sub: "Pas l'énergie après le café. Avant.",
+      bg: "images/q1-bg.jpg",
+      optionImages: ["images/q1-a.jpg", "images/q1-b.jpg", "images/q1-c.jpg"],
       options: [
         "Solide. Je me lève prêt à commencer ma journée.",
         "Variable. Certains jours bons, d'autres lourds.",
@@ -11,8 +13,10 @@
       problemText: "Ton problème n°1, c'est ton énergie. Tu te lèves déjà vidé — et un corps sans énergie, c'est un cœur qui peine à se lever pour Fajr avec présence. Ce n'est pas de la paresse : c'est un signal que ton corps envoie avant de lâcher complètement.",
     },
     {
-      title: "Ta force et ta discipline physique aujourd'hui ?",
+      title: "Ta force et ta discipline physique aujourd'hui ?",
       sub: "Comparé à toi, il y a 5 ou 10 ans.",
+      bg: "images/q2-bg.jpg",
+      optionImages: ["images/q2-a.jpg", "images/q2-b.jpg", "images/q2-c.jpg"],
       options: [
         "Stable. Je tiens mes engagements.",
         "En baisse douce. Je sens que je dois me forcer davantage.",
@@ -21,8 +25,10 @@
       problemText: "Ton problème n°1, c'est ta discipline qui s'effrite. Ce n'est pas un manque de volonté — c'est que personne n'a encore trouvé la vraie racine de ton blocage. Et chaque effort que tu ne fais plus pour ton corps, c'est un effort en moins pour ton adoration.",
     },
     {
-      title: "Le gras autour du ventre ?",
+      title: "Le gras autour du ventre ?",
       sub: "Le signal numéro un du corps qui décroche.",
+      bg: "images/q3-bg.jpg",
+      optionImages: ["images/q3-a.jpg", "images/q3-b.jpg", "images/q3-c.jpg"],
       options: [
         "Sous contrôle, ma ceinture n'a pas bougé.",
         "Il s'installe doucement, malgré mes efforts.",
@@ -31,8 +37,10 @@
       problemText: "Ton problème n°1, c'est ce poids qui s'installe malgré toi. Ton corps est une amānah — il te parle à travers ce ventre qui ne bouge pas, et il attend que tu l'écoutes avant qu'il ne t'impose une pause plus dure.",
     },
     {
-      title: "Ta motivation à tenir tes engagements ?",
+      title: "Ta motivation à tenir tes engagements ?",
       sub: "Sport, discipline, adoration — ce qui te fait avancer.",
+      bg: "images/q4-bg.jpg",
+      optionImages: ["images/q4-a.jpg", "images/q4-b.jpg", "images/q4-c.jpg"],
       options: [
         "Intacte. J'ai toujours faim de mieux faire.",
         "Plus tiède qu'avant. Je me force davantage.",
@@ -41,8 +49,10 @@
       problemText: "Ton problème n°1, c'est ta motivation qui s'éteint. Le feu qui te faisait avancer — dans ton sport comme dans ta pratique — s'essouffle. Ce n'est pas irréversible, mais plus tu attends, plus il sera dur de le rallumer.",
     },
     {
-      title: "La qualité de ton sommeil ?",
+      title: "La qualité de ton sommeil ?",
       sub: "Le vrai marqueur de récupération.",
+      bg: "images/q5-bg.jpg",
+      optionImages: ["images/q5-a.jpg", "images/q5-b.jpg", "images/q5-c.jpg"],
       options: [
         "Profond et réparateur, je récupère vite.",
         "Correct mais haché, je ne me sens pas frais.",
@@ -51,7 +61,7 @@
       problemText: "Ton problème n°1, c'est ton sommeil. Sans récupération, rien d'autre ne tient — ni ton corps, ni ta concentration dans la prière. C'est souvent le premier domino à réparer avant tout le reste.",
     },
     {
-      title: "Ta présence pour ta famille et ton couple ?",
+      title: "Ta présence pour ta famille et ton couple ?",
       sub: "Pas physiquement présent — vraiment présent.",
       options: [
         "Pleinement présent, disponible pour eux.",
@@ -61,7 +71,7 @@
       problemText: "Ton problème n°1, c'est ta présence pour les tiens. Ton corps fatigué te vole ce que tu as de plus précieux : être vraiment là pour ta femme et tes enfants. Prendre soin de toi, c'est aussi prendre soin d'eux.",
     },
     {
-      title: "Ton humeur et ta patience au quotidien ?",
+      title: "Ton humeur et ta patience au quotidien ?",
       sub: "Question directe. Réponse honnête.",
       options: [
         "Stable. Je gère la pression sans craquer.",
@@ -71,7 +81,7 @@
       problemText: "Ton problème n°1, c'est ton humeur qui se dégrade. Un corps épuisé rend un cœur plus dur — et ça déteint sur ta famille, ton travail, et la qualité de tes adorations.",
     },
     {
-      title: "Comment te sens-tu pendant la prière ?",
+      title: "Comment te sens-tu pendant la prière ?",
       sub: "Le lien entre ton corps et ton cœur dans l'adoration.",
       options: [
         "Présent, concentré, apaisé.",
@@ -81,7 +91,7 @@
       problemText: "Ton problème n°1, c'est ta présence dans la prière. Ton corps fatigué te distrait au moment le plus important de ta journée. C'est exactement pour ça que Rijal Fit existe : relier ton corps à ton adoration, pas les séparer.",
     },
     {
-      title: "Quand tu te regardes dans le miroir ?",
+      title: "Quand tu te regardes dans le miroir ?",
       sub: "L'instinct compte plus que le détail.",
       options: [
         "Je me reconnais. J'aime ce que je vois.",
@@ -94,7 +104,7 @@
       // Question silencieuse : signal indirect de contexte (jamais présenté comme
       // tel, jamais montré à la personne, n'entre pas dans le score de zone
       // affiché) — sert uniquement au suivi interne du lead.
-      title: "Ta situation professionnelle aujourd'hui ?",
+      title: "Ta situation professionnelle aujourd'hui ?",
       sub: "Pour mieux comprendre ton contexte de vie.",
       options: [
         "Stable, une situation confortable.",
@@ -209,12 +219,18 @@
     document.getElementById('q-title').textContent = q.title;
     document.getElementById('q-sub').textContent = q.sub;
 
+    // Fond photo dédié si la question en a un (sinon on garde le fond
+    // générique défini en CSS via .photo-bg--question).
+    const questionScreen = document.getElementById('screen-question');
+    questionScreen.style.backgroundImage = q.bg ? `url('${q.bg}')` : '';
+
     const optionsEl = document.getElementById('q-options');
     optionsEl.innerHTML = '';
     const letters = ['A', 'B', 'C'];
-    // Miniatures réutilisées pour toutes les questions : A = à l'aise, B = neutre,
-    // C = en difficulté — même trio d'images que le fond des pages de résultat.
-    const thumbs = ['images/hero-result-stable.jpg', 'images/hero-result-yoyo.jpg', 'images/hero-result-decrochage.jpg'];
+    // Miniatures par défaut réutilisées pour les questions sans set dédié :
+    // A = à l'aise, B = neutre, C = en difficulté (mêmes images que les
+    // pages de résultat). Une question avec `optionImages` prend le pas.
+    const thumbs = q.optionImages || ['images/hero-result-stable.jpg', 'images/hero-result-yoyo.jpg', 'images/hero-result-decrochage.jpg'];
     q.options.forEach((optionText, optIndex) => {
       const btn = document.createElement('button');
       btn.type = 'button';
