@@ -142,6 +142,35 @@ main.container { padding-top: 56px; padding-bottom: 64px; }
 
 .hero-reassurance { margin-top: .85rem; font-size: .85rem; color: var(--gris); }
 
+/* ── Photo de fond intro (fondu vers le beige de la page) ── */
+.hero-photo {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: -56px;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('images/hero-intro.jpg');
+  background-size: cover;
+  background-position: center 25%;
+  padding: 56px 24px 64px;
+}
+
+.hero-photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(26,26,26,.55) 0%, rgba(26,26,26,.6) 45%, var(--beige) 96%);
+}
+
+.hero-photo__content { position: relative; z-index: 1; max-width: 640px; }
+
+.hero-title--light { color: var(--blanc); }
+.hero-sub--light { color: #e7e3d9; }
+.hero-reassurance--light { color: #cfcabb; }
+
 .stats-row {
   display: flex;
   justify-content: center;
