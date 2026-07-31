@@ -671,46 +671,48 @@
   }
 
   // ── Graphique de trajectoire (SVG fait maison, pas de dépendance externe) ──
-  function project(todayVal) {
-    const twenty = Math.max(4, todayVal * 0.15);
-    const thirty = Math.max(8, todayVal * 0.45);
-    const in12 = Math.min(96, todayVal + (100 - todayVal) * 0.28 + 4);
-    const in24 = Math.min(98, in12 + (100 - in12) * 0.35 + 4);
-    return [twenty, thirty, todayVal, in12, in24];
+  // Score sur une échelle 0-3 : la réponse du jour donne le score actuel
+  // (A=3, B=2, C=1 — 0 n'est jamais une réponse, c'est juste le plancher de
+  // l'échelle). Sans intervention, on projette une meilleure situation dans
+  // le passé (20/30 ans) et une dégradation dans le futur (+12/+24 mois).
+  function projectScore(today) {
+    const twenty = Math.min(3, today + (3 - today) * 0.7 + 0.3);
+    const thirty = Math.min(3, today + (3 - today) * 0.35 + 0.1);
+    const in12 = Math.max(0, today - today * 0.30 - 0.15);
+    const in24 = Math.max(0, in12 - in12 * 0.40 - 0.15);
+    return [twenty, thirty, today, in12, in24];
   }
 
   function renderChart(answers) {
-    const mapAnswer = (val) => (val === null ? 40 : val * 40 + 15); // 0->15, 1->55, 2->95
+    const mapAnswer = (val) => (val === null ? 2 : 3 - val); // A(0)->3, B(1)->2, C(2)->1
 
     const series = [
-      { label: 'Énergie', color: '#4A5240', values: project(mapAnswer(answers[0])) },
-      { label: 'Prière', color: '#C9A84C', values: project(mapAnswer(answers[7])) },
-      { label: 'Discipline', color: '#7a8a6a', values: project(mapAnswer(answers[1])) },
-      { label: 'Poids', color: '#a13a3a', values: project(mapAnswer(answers[2])) },
+      { label: 'Énergie', color: '#4A5240', values: projectScore(mapAnswer(answers[0])) },
+      { label: 'Prière', color: '#C9A84C', values: projectScore(mapAnswer(answers[7])) },
+      { label: 'Discipline', color: '#7a8a6a', values: projectScore(mapAnswer(answers[1])) },
     ];
 
     document.getElementById('chart-legend').innerHTML = series.map((s) =>
       `<span><i style="background:${s.color}"></i>${s.label}</span>`
     ).join('');
 
-    const W = 640, H = 260, padL = 36, padR = 16, padT = 16, padB = 34;
+    const W = 640, H = 260, padL = 26, padR = 16, padT = 16, padB = 34;
     const plotW = W - padL - padR;
     const plotH = H - padT - padB;
     const xLabels = ['20 ans', '30 ans', "Aujourd'hui", '+12 mois', '+24 mois'];
 
     function xPos(i) { return padL + (i / (xLabels.length - 1)) * plotW; }
-    // v=0 (bonne réponse) en haut du graphe, v=100 (mauvaise réponse) en bas —
-    // ainsi une trajectoire qui se dégrade se lit naturellement comme une
-    // courbe qui descend, pas qui monte.
-    function yPos(v) { return padT + (v / 100) * plotH; }
+    // score 3 (le mieux) en haut du graphe, score 0 (le pire) en bas —
+    // une trajectoire qui se dégrade se lit comme une courbe qui descend.
+    function yPos(v) { return padT + plotH - (v / 3) * plotH; }
 
     let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;font-family:Inter,sans-serif;">`;
 
-    // bandes de zone (yPos croît avec v, donc "from" est toujours au-dessus de "to")
-    const bands = [{ from: 0, to: 30, color: '#eef0ea' }, { from: 30, to: 60, color: '#faf4e4' }, { from: 60, to: 100, color: '#f6e9e9' }];
-    bands.forEach((b) => {
-      const yTop = yPos(b.from), yBottom = yPos(b.to);
-      svg += `<rect x="${padL}" y="${yTop}" width="${plotW}" height="${yBottom - yTop}" fill="${b.color}" />`;
+    // graduations 0/1/2/3 en ordonnée
+    [0, 1, 2, 3].forEach((n) => {
+      const y = yPos(n);
+      svg += `<line x1="${padL}" y1="${y}" x2="${padL + plotW}" y2="${y}" stroke="#e4ddd0" stroke-width="1" />`;
+      svg += `<text x="${padL - 6}" y="${y + 3}" font-size="10" fill="#9a9488" text-anchor="end">${n}</text>`;
     });
 
     // lignes de séries
@@ -726,10 +728,6 @@
     xLabels.forEach((label, i) => {
       svg += `<text x="${xPos(i)}" y="${H - 8}" font-size="10.5" fill="#6b7280" text-anchor="middle">${label}</text>`;
     });
-
-    // axe Y : explique ce que représente le haut / le bas du graphe
-    svg += `<text x="${padL + 4}" y="${padT + 12}" font-size="10" font-weight="600" fill="#7a8a6a">Équilibre</text>`;
-    svg += `<text x="${padL + 4}" y="${padT + plotH - 6}" font-size="10" font-weight="600" fill="#a13a3a">Décrochage</text>`;
 
     svg += `</svg>`;
     document.getElementById('chart-container').innerHTML = svg;
