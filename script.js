@@ -692,6 +692,14 @@
       { label: 'Discipline', color: '#7a8a6a', values: projectScore(mapAnswer(answers[1])) },
     ];
 
+    // Léger décalage vertical par série pour que deux marqueurs avec la même
+    // réponse aujourd'hui (donc des courbes identiques) restent visibles l'une
+    // à côté de l'autre au lieu que la dernière dessinée masque l'autre.
+    series.forEach((s, i) => {
+      const jitter = (i - (series.length - 1) / 2) * 0.045;
+      s.values = s.values.map((v) => Math.min(3, Math.max(0, v + jitter)));
+    });
+
     document.getElementById('chart-legend').innerHTML = series.map((s) =>
       `<span><i style="background:${s.color}"></i>${s.label}</span>`
     ).join('');
@@ -715,10 +723,14 @@
       svg += `<text x="${padL - 6}" y="${y + 3}" font-size="10" fill="#9a9488" text-anchor="end">${n}</text>`;
     });
 
-    // lignes de séries
+    // lignes de séries : plein pour le passé→aujourd'hui (index 0-2), pointillé
+    // pour la projection aujourd'hui→futur (index 2-4), les deux tronçons
+    // partageant le point "Aujourd'hui".
     series.forEach((s) => {
-      const points = s.values.map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
-      svg += `<polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
+      const pastPoints = s.values.slice(0, 3).map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
+      const futurePoints = s.values.slice(2).map((v, i) => `${xPos(i + 2)},${yPos(v)}`).join(' ');
+      svg += `<polyline points="${pastPoints}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
+      svg += `<polyline points="${futurePoints}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5,4" />`;
       s.values.forEach((v, i) => {
         svg += `<circle cx="${xPos(i)}" cy="${yPos(v)}" r="3.5" fill="${s.color}" />`;
       });
