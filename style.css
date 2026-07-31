@@ -167,6 +167,13 @@ main.container { padding-top: 56px; padding-bottom: 64px; }
 
 .hero-photo__content { position: relative; z-index: 1; max-width: 640px; }
 
+.hero-photo--bio {
+  background-image: url('images/hero-bio.jpg');
+  background-position: center 30%;
+  min-height: 420px;
+  padding-bottom: 48px;
+}
+
 .hero-title--light { color: var(--blanc); }
 .hero-sub--light { color: #e7e3d9; }
 .hero-reassurance--light { color: #cfcabb; }
@@ -231,6 +238,9 @@ main.container { padding-top: 56px; padding-bottom: 64px; }
 }
 
 .question-sub { color: var(--gris); font-size: 1rem; margin-bottom: 2rem; }
+
+.question-title--light { color: var(--blanc); }
+.question-sub--light { color: #e7e3d9; }
 
 .options { display: flex; flex-direction: column; gap: 14px; }
 
