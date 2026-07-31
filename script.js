@@ -212,11 +212,20 @@
     const optionsEl = document.getElementById('q-options');
     optionsEl.innerHTML = '';
     const letters = ['A', 'B', 'C'];
+    // Miniatures réutilisées pour toutes les questions : A = à l'aise, B = neutre,
+    // C = en difficulté — même trio d'images que le fond des pages de résultat.
+    const thumbs = ['images/hero-result-stable.jpg', 'images/hero-result-yoyo.jpg', 'images/hero-result-decrochage.jpg'];
     q.options.forEach((optionText, optIndex) => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'option-card';
-      btn.innerHTML = `<span class="option-card__badge">${letters[optIndex]}</span><span>${optionText}</span>`;
+      btn.innerHTML = `
+        <span class="option-card__thumb">
+          <img src="${thumbs[optIndex]}" alt="" />
+          <span class="option-card__badge">${letters[optIndex]}</span>
+        </span>
+        <span>${optionText}</span>
+      `;
       btn.addEventListener('click', () => selectOption(index, optIndex));
       optionsEl.appendChild(btn);
     });
@@ -339,6 +348,10 @@
   });
 
   function renderResult(zone, score, prenom, imc) {
+    const header = document.getElementById('result-header');
+    header.classList.remove('result-header--stable', 'result-header--yoyo', 'result-header--decrochage');
+    header.classList.add(`result-header--${zone.key}`);
+
     const badge = document.getElementById('result-badge');
     badge.textContent = `Zone · ${zone.name}`;
     badge.style.background = 'rgba(255,255,255,.12)';
