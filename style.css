@@ -546,7 +546,7 @@ input:focus { outline: none; border-color: var(--or); }
    + curseur positionné exactement sur la valeur réelle ── */
 .gauge { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.precise-gauge { position: relative; padding-top: 22px; }
+.precise-gauge { position: relative; padding-top: 22px; width: 100%; }
 
 .precise-gauge__track {
   display: flex;
