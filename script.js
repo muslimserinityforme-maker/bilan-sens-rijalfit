@@ -63,6 +63,8 @@
     {
       title: "Ta présence pour ta famille et ton couple ?",
       sub: "Pas physiquement présent — vraiment présent.",
+      bg: "images/q6-bg.jpg",
+      optionImages: ["images/q6-a.jpg", "images/q6-b.jpg", "images/q6-c.jpg"],
       options: [
         "Pleinement présent, disponible pour eux.",
         "Moins disponible qu'avant, je le sens.",
@@ -73,6 +75,8 @@
     {
       title: "Ton humeur et ta patience au quotidien ?",
       sub: "Question directe. Réponse honnête.",
+      bg: "images/q7-bg.jpg",
+      optionImages: ["images/q7-a.jpg", "images/q7-b.jpg", "images/q7-c.jpg"],
       options: [
         "Stable. Je gère la pression sans craquer.",
         "Plus irritable, plus à fleur de peau.",
@@ -83,6 +87,8 @@
     {
       title: "Comment te sens-tu pendant la prière ?",
       sub: "Le lien entre ton corps et ton cœur dans l'adoration.",
+      bg: "images/q8-bg.jpg",
+      optionImages: ["images/q8-a.jpg", "images/q8-b.jpg", "images/q8-c.jpg"],
       options: [
         "Présent, concentré, apaisé.",
         "L'esprit ailleurs, difficile de me concentrer.",
@@ -93,6 +99,8 @@
     {
       title: "Quand tu te regardes dans le miroir ?",
       sub: "L'instinct compte plus que le détail.",
+      bg: "images/q9-bg.jpg",
+      optionImages: ["images/q9-a.jpg", "images/q9-b.jpg", "images/q9-c.jpg"],
       options: [
         "Je me reconnais. J'aime ce que je vois.",
         "Je vois un homme qui s'éloigne de lui-même.",
@@ -106,6 +114,8 @@
       // affiché) — sert uniquement au suivi interne du lead.
       title: "Ta situation professionnelle aujourd'hui ?",
       sub: "Pour mieux comprendre ton contexte de vie.",
+      bg: "images/q10-bg.jpg",
+      optionImages: ["images/q10-a.jpg", "images/q10-b.jpg", "images/q10-c.jpg"],
       options: [
         "Stable, une situation confortable.",
         "Correcte, mais je dois faire attention.",
@@ -119,21 +129,21 @@
     stable: {
       key: 'stable', min: 0, max: 6,
       color: '#4A5240', bg: '#eef0ea',
-      name: 'Réalignement Stable',
+      name: 'Rijal en Éveil',
       tagline: "Ta base tient. Le sol ne bouge pas encore — mais sans cadre, il peut se fissurer plus vite que tu ne le crois.",
       message: "Ta base tient — c'est une vraie force, ne la sous-estime pas. Mais « stable » ne veut pas dire « à l'abri ». Ton corps est une amānah : il ne demande pas d'être parfait, juste d'être entretenu avant que la fissure ne s'installe. Si tu veux verrouiller ça durablement — avant que le rythme de la vie ne s'en charge à ta place — je suis là.",
     },
     yoyo: {
       key: 'yoyo', min: 7, max: 12,
       color: '#C9A84C', bg: '#faf4e4',
-      name: 'Le Cycle Yoyo',
+      name: 'Rijal Fragilisé',
       tagline: "Ton corps envoie des signaux. La fenêtre pour inverser le cycle est encore ouverte — mais elle se referme chaque mois qui passe.",
       message: "Ce que tu ressens là, ce n'est pas un manque de volonté. C'est le cycle : tu te reprends, tu tiens, la fatigue s'installe, tu redécroches. Le problème n'est jamais le programme — c'est qu'on n'a jamais trouvé la vraie racine de ton blocage. Ton corps a un droit sur toi, et là, il te parle. C'est le bon moment pour l'écouter.",
     },
     decrochage: {
       key: 'decrochage', min: 13, max: 18,
       color: '#a13a3a', bg: '#f6e9e9',
-      name: 'Décrochage Installé',
+      name: 'Rijal en Déclin',
       tagline: "Le décrochage est installé. Chaque semaine qui passe rend la reprise plus difficile. Il te faut une méthode, maintenant.",
       message: "Je ne vais pas te mentir : ce que tu ressens est lourd, et c'est réel. Mais ce n'est pas une fatalité. Ton corps a un droit sur toi — pas pour te juger, pour t'aider à te reprendre. J'ai accompagné des frères exactement dans ta situation, et le premier pas n'est jamais le plus dur physiquement — c'est de décider de ne plus porter ça seul.",
     },
@@ -369,7 +379,7 @@
     header.classList.add(`result-header--${zone.key}`);
 
     const badge = document.getElementById('result-badge');
-    badge.textContent = `Zone · ${zone.name}`;
+    badge.innerHTML = `<span class="result-header__badge-square" style="background:${zone.color}"></span>Zone · ${zone.name}`;
     badge.style.background = 'rgba(255,255,255,.12)';
     badge.style.color = '#fff';
 

@@ -438,7 +438,9 @@ input:focus { outline: none; border-color: var(--or); }
 .result-header--decrochage { background-image: url('images/hero-result-decrochage.jpg'); }
 
 .result-header__badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: .8rem;
@@ -447,6 +449,14 @@ input:focus { outline: none; border-color: var(--or); }
   padding: 5px 14px;
   border-radius: 20px;
   margin-bottom: 1.2rem;
+}
+
+.result-header__badge-square {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .result-header__hello { color: #d1cfc9; font-size: .95rem; margin-bottom: .3rem; }
