@@ -689,6 +689,10 @@
       { label: 'Poids', color: '#a13a3a', values: project(mapAnswer(answers[2])) },
     ];
 
+    document.getElementById('chart-legend').innerHTML = series.map((s) =>
+      `<span><i style="background:${s.color}"></i>${s.label}</span>`
+    ).join('');
+
     const W = 640, H = 260, padL = 36, padR = 16, padT = 16, padB = 34;
     const plotW = W - padL - padR;
     const plotH = H - padT - padB;
