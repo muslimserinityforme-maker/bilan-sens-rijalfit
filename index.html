@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Diagnostic de Réalignement — Rijal Fit</title>
-  <meta name="description" content="9 questions honnêtes. Découvre où tu en es réellement — énergie, discipline, sommeil, prière. Sans jugement, sans jargon." />
+  <meta name="description" content="Quelques questions honnêtes. Découvre où tu en es réellement — énergie, discipline, sommeil, prière. Sans jugement, sans jargon." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,7 +17,7 @@
   <div class="topbar">
     <button type="button" id="quit-btn" class="topbar__quit">× Quitter</button>
     <div class="topbar__progress"><div id="progress-fill" class="topbar__progress-fill"></div></div>
-    <div id="topbar-count" class="topbar__count">0 / 9</div>
+    <div id="topbar-count" class="topbar__count">0 / 10</div>
   </div>
 
   <main class="container">
@@ -25,15 +25,57 @@
     <!-- ═══ ÉCRAN 0 — Intro ═══ -->
     <section id="screen-intro" class="screen">
       <p class="eyebrow">Rijal Fit · Diagnostic de Réalignement</p>
-      <h1 class="hero-title">Ton corps est-il encore <em>acteur</em> de ton adoration ?</h1>
-      <p class="hero-sub">Énergie, discipline, sommeil, présence dans la prière. Réponds à 9 questions honnêtes et découvre où tu en es réellement — sans jugement, sans jargon.</p>
+      <h1 class="hero-title">« Ton corps a un droit sur toi. »</h1>
+      <p class="hero-sub">Énergie, discipline, sommeil, présence dans la prière. Réponds à quelques questions honnêtes et découvre où tu en es réellement — sans jugement, sans jargon.</p>
       <button type="button" id="start-btn" class="btn btn--primary btn--large">Lancer le diagnostic →</button>
       <p class="hero-reassurance">≈ 2 minutes · Gratuit · Confidentiel</p>
       <div class="stats-row">
-        <div class="stat"><span class="stat__num">9</span><span class="stat__label">questions ciblées</span></div>
+        <div class="stat"><span class="stat__num">10</span><span class="stat__label">questions ciblées</span></div>
         <div class="stat"><span class="stat__num">3</span><span class="stat__label">profils précis</span></div>
         <div class="stat"><span class="stat__num">100%</span><span class="stat__label">sans jargon</span></div>
       </div>
+    </section>
+
+    <!-- ═══ ÉCRAN — Profil de base (confidentiel) ═══ -->
+    <section id="screen-bio" class="screen" hidden>
+      <p class="eyebrow">Avant de commencer</p>
+      <h2 class="question-title">Tes informations restent strictement confidentielles.</h2>
+      <p class="question-sub">Elles servent uniquement à construire ton profil — jamais partagées, jamais publiées.</p>
+      <div class="bio-fields">
+        <div class="field">
+          <label for="b-age">Âge *</label>
+          <input type="number" id="b-age" name="age" min="14" max="100" required />
+        </div>
+        <div class="field">
+          <label for="b-taille">Taille (cm) *</label>
+          <input type="number" id="b-taille" name="taille" min="120" max="230" required />
+        </div>
+        <div class="field">
+          <label for="b-poids">Poids (kg) *</label>
+          <input type="number" id="b-poids" name="poids" min="35" max="250" required />
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="b-activite">Niveau d'activité physique *</label>
+          <select id="b-activite" name="activite" required>
+            <option value="sédentaire">Sédentaire — bureau/écran, peu de mouvement</option>
+            <option value="modéré">Modéré — je bouge un peu</option>
+            <option value="actif">Actif — métier physique ou sport régulier</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="b-objectif">Ton objectif corporel *</label>
+          <select id="b-objectif" name="objectif" required>
+            <option value="perte de graisse">Perdre du gras</option>
+            <option value="prise de muscle">Prendre du muscle</option>
+            <option value="recomposition">Les deux (recomposition)</option>
+            <option value="maintien">Me maintenir / stabiliser</option>
+          </select>
+        </div>
+      </div>
+      <button type="button" id="bio-continue-btn" class="btn btn--primary btn--large">Continuer →</button>
+      <p id="bio-error" class="form-error" role="alert" hidden></p>
     </section>
 
     <!-- ═══ ÉCRANS QUESTIONS (générés en JS) ═══ -->
@@ -105,12 +147,22 @@
         <h1 class="result-header__title" id="result-zone-name"></h1>
         <p class="result-header__tagline" id="result-zone-tagline"></p>
         <p class="result-header__score"><span id="result-score"></span> <span class="result-header__score-max">/ 18 points cumulés</span></p>
+        <p class="result-header__bio" id="result-bio"></p>
       </header>
 
       <section class="zones-section">
         <p class="eyebrow">Où tu te situes</p>
         <h2 class="section-title">Trois profils. Un seul est le tien aujourd'hui.</h2>
         <div class="zones-grid" id="zones-grid"></div>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">Ta fiche</p>
+        <h2 class="section-title">Indice de masse corporelle (IMC)</h2>
+        <div class="fiche-card">
+          <div class="fiche-rows" id="fiche-imc-rows"></div>
+          <div class="gauge" id="gauge-imc"></div>
+        </div>
       </section>
 
       <section class="chart-section">
@@ -128,13 +180,40 @@
         </div>
       </section>
 
+      <section class="fiche-section">
+        <p class="eyebrow">Ton taux de graisse estimé</p>
+        <h2 class="section-title">Une fourchette, pas un chiffre gravé dans le marbre</h2>
+        <p class="fiche-intro" id="bodyfat-range-text"></p>
+        <div class="fiche-card">
+          <div class="gauge" id="gauge-bodyfat"></div>
+        </div>
+        <p class="fiche-caption">Estimation par formule reconnue (Deurenberg), pas une mesure clinique (DEXA, impédancemétrie).</p>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">Ta fiche</p>
+        <h2 class="section-title">Composition &amp; besoins</h2>
+        <div class="fiche-card">
+          <div class="fiche-rows" id="fiche-composition-rows"></div>
+        </div>
+        <p class="fiche-caption">Formules Deurenberg (masse grasse/maigre) et Katch-McArdle (métabolisme) — des estimations, pas une mesure clinique.</p>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">Ton type de ventre</p>
+        <h2 class="section-title">Le plus probable selon tes réponses</h2>
+        <div class="bellytype-grid" id="bellytype-grid"></div>
+        <p class="fiche-caption">Une orientation à partir de tes réponses — pas un diagnostic médical.</p>
+      </section>
+
       <section class="message-section">
-        <p class="eyebrow">Message personnel</p>
-        <h2 class="section-title">Ce que je dirais à un frère dans ta situation</h2>
+        <p class="eyebrow">Ton Bilan de Sens personnalisé</p>
+        <h2 class="section-title">Voilà pourquoi faire ce bilan a du sens :</h2>
         <div class="message-card">
           <img src="images/matt.jpg" alt="Matthieu — Coach Rijal Fit" class="message-card__photo" />
           <div class="message-card__body">
             <p id="message-zone-text" class="message-card__text"></p>
+            <p id="message-problem-text" class="message-card__text"></p>
             <p class="message-card__signature">— Matthieu, Coach Rijal Fit</p>
           </div>
         </div>

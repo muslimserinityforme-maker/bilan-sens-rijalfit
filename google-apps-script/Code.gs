@@ -6,7 +6,11 @@ function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['Date', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Score', 'Zone']);
+    sheet.appendRow([
+      'Date', 'Prénom', 'Nom', 'Email', 'Téléphone',
+      'Âge', 'Taille', 'Poids', 'Activité', 'Objectif', 'IMC',
+      'Score', 'Zone', 'Signal contexte pro',
+    ]);
   }
 
   var data = JSON.parse(e.postData.contents);
@@ -17,8 +21,15 @@ function doPost(e) {
     data.nom || '',
     data.email || '',
     data.telephone || '',
+    data.age || '',
+    data.taille || '',
+    data.poids || '',
+    data.activite || '',
+    data.objectif || '',
+    data.imc || '',
     data.score || '',
     data.zone || '',
+    data.contexteProSignal != null ? data.contexteProSignal : '',
   ]);
 
   return ContentService

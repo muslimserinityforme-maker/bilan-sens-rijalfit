@@ -62,8 +62,15 @@ module.exports = async (req, res) => {
     nom: data.nom,
     email: data.email,
     telephone: data.telephone,
+    age: data.age,
+    taille: data.taille,
+    poids: data.poids,
+    activite: data.activite,
+    objectif: data.objectif,
+    imc: data.imc,
     score: data.score,
     zone: data.zone,
+    contexteProSignal: data.contexteProSignal,
   };
 
   console.log('DIAGNOSTIC_LEAD', JSON.stringify(lead));
