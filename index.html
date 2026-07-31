@@ -165,6 +165,19 @@
         </div>
       </section>
 
+      <section class="fiche-section">
+        <p class="eyebrow">Ton morphotype</p>
+        <h2 class="section-title">Le plus probable selon ton profil</h2>
+        <div class="fiche-card morphotype-card">
+          <img id="morphotype-img" class="morphotype-img" alt="" />
+          <div class="morphotype-body">
+            <h3 id="morphotype-name" class="morphotype-name"></h3>
+            <p id="morphotype-text" class="fiche-intro"></p>
+          </div>
+        </div>
+        <p class="fiche-caption">Une orientation à partir de ton IMC et de ton niveau d'activité — pas un diagnostic médical.</p>
+      </section>
+
       <section class="chart-section">
         <p class="eyebrow">La trajectoire de ta vie</p>
         <h2 class="section-title">Tes marqueurs — aujourd'hui et si rien ne change</h2>
@@ -176,7 +189,7 @@
             <span><i style="background:#a13a3a"></i>Zone de décrochage</span>
           </div>
           <div id="chart-container"></div>
-          <p class="chart-caption">Lecture : plus la courbe monte, plus le marqueur s'éloigne de l'équilibre. Énergie, régularité de la prière, discipline physique et poids s'entraînent : l'un qui lâche fragilise les autres.</p>
+          <p class="chart-caption">Lecture : en abscisse, ta ligne de vie (20 ans → aujourd'hui → +24 mois si rien ne change) ; en ordonnée, ta proximité à l'équilibre — plus la courbe descend, plus le marqueur s'éloigne de l'équilibre et se rapproche du décrochage. Énergie, régularité de la prière, discipline physique et poids s'entraînent : l'un qui lâche fragilise les autres.</p>
         </div>
       </section>
 
@@ -187,6 +200,7 @@
         <div class="fiche-card">
           <div class="gauge" id="gauge-bodyfat"></div>
         </div>
+        <p class="fiche-intro" id="bodyfat-explain"></p>
         <p class="fiche-caption">Estimation par formule reconnue (Deurenberg), pas une mesure clinique (DEXA, impédancemétrie).</p>
       </section>
 
@@ -204,6 +218,17 @@
         <h2 class="section-title">Le plus probable selon tes réponses</h2>
         <div class="bellytype-grid" id="bellytype-grid"></div>
         <p class="fiche-caption">Une orientation à partir de tes réponses — pas un diagnostic médical.</p>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">Ta projection</p>
+        <h2 class="section-title">Départ vs. dans 3 mois, si tu tiens le cap</h2>
+        <p class="fiche-intro" id="projection-intro"></p>
+        <div class="fiche-card">
+          <div class="fiche-rows" id="projection-rows"></div>
+          <div class="projection-bars" id="projection-bars"></div>
+        </div>
+        <p class="fiche-caption">Projection indicative sur 3 mois si tu respectes l'objectif calorique ci-dessus — pas une garantie, un cap réaliste selon ton profil.</p>
       </section>
 
       <section class="message-section">

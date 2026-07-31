@@ -401,8 +401,10 @@
 
     const body = computeBodyComposition(bio.age, bio.taille, bio.poids, bio.activite, bio.objectif);
     renderFicheImc(bio, body);
+    renderMorphotype(body, bio);
     renderBodyFat(body);
     renderFicheComposition(body);
+    renderProjection(bio, body);
     renderBellyType(answers, bio);
 
     document.getElementById('message-zone-text').textContent = zone.message;
@@ -433,43 +435,6 @@
     return { imc, bodyFatPercent: +bodyFatPercent.toFixed(1), masseGrasse, masseMaigre, bmr, tdee, objectifKcal, proteines_g, glucides_g, lipides_g };
   }
 
-  function hexToRgba(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
-
-  // Silhouette simple en SVG (pas de photo) — s'élargit légèrement d'une bande à l'autre.
-  function silhouette(color, scale) {
-    const w = 20 * scale;
-    return `<svg width="36" height="58" viewBox="0 0 40 70" aria-hidden="true"><circle cx="20" cy="10" r="9" fill="${color}"/><path d="M ${20 - w / 2} 68 Q ${20 - w / 2 - 3} 30 20 22 Q ${20 + w / 2 + 3} 30 ${20 + w / 2} 68 Z" fill="${color}"/></svg>`;
-  }
-
-  function renderGaugeInto(elId, bands, currentValue) {
-    const html = bands.map((b) => {
-      const active = currentValue >= b.min && currentValue < b.max;
-      const border = active ? b.color : 'transparent';
-      return `<div class="gauge-seg" style="background:${hexToRgba(b.color, active ? 0.12 : 0.05)};border-color:${border}">
-        <div class="gauge-seg__silhouette">${silhouette(b.color, b.scale)}</div>
-        <span class="gauge-seg__range" style="color:${b.color}">${b.rangeLabel}</span>
-        <span class="gauge-seg__label">${b.label}</span>
-      </div>`;
-    }).join('');
-    document.getElementById(elId).innerHTML = html;
-    // is-active nécessite la classe (pas juste le style) pour l'effet visuel défini en CSS
-    const segs = document.getElementById(elId).children;
-    bands.forEach((b, i) => {
-      if (currentValue >= b.min && currentValue < b.max) segs[i].classList.add('is-active');
-    });
-  }
-
-  const IMC_BANDS = [
-    { min: 0, max: 18.5, rangeLabel: '< 18,5', label: 'Sous-poids', color: '#7a93a8', scale: 0.7 },
-    { min: 18.5, max: 25, rangeLabel: '18,5-24,9', label: 'Normal', color: '#4A5240', scale: 0.85 },
-    { min: 25, max: 30, rangeLabel: '25-29,9', label: 'Surpoids', color: '#C9A84C', scale: 1.0 },
-    { min: 30, max: 35, rangeLabel: '30-34,9', label: 'Obésité', color: '#c17f3a', scale: 1.15 },
-    { min: 35, max: 999, rangeLabel: '35+', label: 'Obésité sévère', color: '#a13a3a', scale: 1.3 },
-  ];
-
   const BODYFAT_BANDS = [
     { min: 0, max: 15, rangeLabel: '< 15%', label: 'Faible', color: '#4A5240', scale: 0.8 },
     { min: 15, max: 25, rangeLabel: '15-25%', label: 'Moyen', color: '#C9A84C', scale: 1.0 },
@@ -485,14 +450,64 @@
       ["Niveau d'activité", ACTIVITE_LABELS[bio.activite] || bio.activite],
     ];
     document.getElementById('fiche-imc-rows').innerHTML = rows.map(([l, v]) => `<div class="fiche-row"><span class="fiche-row__label">${l}</span><span class="fiche-row__value">${v}</span></div>`).join('');
-    renderGaugeInto('gauge-imc', IMC_BANDS, body.imc);
+    document.getElementById('gauge-imc').innerHTML = '<img src="images/imc-gauge.jpg" alt="Indice de masse corporelle (IMC)" class="gauge-static-img" />';
   }
+
+  // Orientation, pas un diagnostic : approximée à partir de l'IMC (proxy simple
+  // de la corpulence générale), faute de mesures morphologiques réelles (largeur
+  // d'épaules, ossature) dans ce formulaire.
+  const MORPHOTYPES = {
+    ectomorphe: {
+      name: 'Ectomorphe',
+      img: 'images/morphotype-ectomorphe.jpg',
+      text: "Une ossature fine et un métabolisme rapide : tu as naturellement du mal à prendre du poids, muscle comme graisse. Le sport te demande souvent plus d'énergie que tu n'en as en réserve — l'enjeu pour toi, c'est de manger assez, pas de te restreindre.",
+    },
+    mesomorphe: {
+      name: 'Mésomorphe',
+      img: 'images/morphotype-mesomorphe.jpg',
+      text: "Une carrure naturellement athlétique : tu réagis vite à l'entraînement, tu prends du muscle et perds du gras plus facilement que la moyenne. Le risque, c'est de compter sur cette facilité et de relâcher le cadre — ce profil se dégrade vite dès que l'hygiène de vie part en vrille.",
+    },
+    endomorphe: {
+      name: 'Endomorphe',
+      img: 'images/morphotype-endomorphe.jpg',
+      text: "Une ossature large et un métabolisme plus lent : ton corps stocke plus facilement, surtout au niveau du ventre. Ce n'est pas un manque de volonté — c'est ta base de départ. Bien encadré, c'est souvent le profil qui progresse le plus vite une fois le déclic fait.",
+    },
+  };
+
+  function renderMorphotype(body, bio) {
+    let key;
+    if (body.imc < 21) key = 'ectomorphe';
+    else if (body.imc < 27) key = 'mesomorphe';
+    else key = 'endomorphe';
+    const m = MORPHOTYPES[key];
+    document.getElementById('morphotype-img').src = m.img;
+    document.getElementById('morphotype-img').alt = m.name;
+    document.getElementById('morphotype-name').textContent = m.name;
+    document.getElementById('morphotype-text').textContent = m.text;
+  }
+
+  const BODYFAT_CURSOR_LEFT = { Faible: '32%', Moyen: '50%', Élevé: '68%' };
+
+  const BODYFAT_EXPLAIN = {
+    Faible: "Ton corps garde peu de réserve — le sport et l'assiette font déjà leur travail. Le vrai enjeu à ce niveau, c'est de tenir cette discipline dans la durée, pas de la relâcher une fois le confort installé.",
+    Moyen: "Ni sec ni en surcharge — un niveau intermédiaire qui peut basculer dans un sens ou dans l'autre selon ce que tu fais dans les prochains mois. C'est souvent le moment le plus facile pour reprendre le contrôle, avant que ça ne s'installe.",
+    Élevé: "À ce niveau, la graisse s'installe surtout autour des organes (graisse viscérale) — celle qui pèse le plus sur l'énergie, le sommeil et la santé cardiovasculaire sur la durée. Ce n'est pas une fatalité, mais plus tu attends, plus le corps s'y habitue.",
+  };
 
   function renderBodyFat(body) {
     const low = Math.floor(body.bodyFatPercent / 5) * 5;
     const high = low + 5;
-    document.getElementById('bodyfat-range-text').textContent = `Ton taux de graisse corporelle estimé se situe entre ${low}% et ${high}%.`;
-    renderGaugeInto('gauge-bodyfat', BODYFAT_BANDS, body.bodyFatPercent);
+    const band = BODYFAT_BANDS.find((b) => body.bodyFatPercent >= b.min && body.bodyFatPercent < b.max) || BODYFAT_BANDS[BODYFAT_BANDS.length - 1];
+
+    document.getElementById('bodyfat-range-text').textContent = `Ton taux de graisse corporelle estimé se situe entre ${low}% et ${high}% — dans la zone "${band.label}". Ce n'est pas une mesure clinique, mais une estimation fiable à partir de ton profil, suffisante pour situer où tu en es réellement.`;
+
+    document.getElementById('gauge-bodyfat').innerHTML = `
+      <div class="bodyfat-gauge-wrap">
+        <img src="images/bodyfat-gauge.jpg" alt="Repères de taux de graisse corporelle" class="gauge-static-img" />
+        <div class="bodyfat-cursor" style="left:${BODYFAT_CURSOR_LEFT[band.label]}"><span></span></div>
+      </div>`;
+
+    document.getElementById('bodyfat-explain').textContent = BODYFAT_EXPLAIN[band.label];
   }
 
   function renderFicheComposition(body) {
@@ -505,6 +520,73 @@
       ['Macros cibles', `${body.proteines_g} g protéines · ${body.glucides_g} g glucides · ${body.lipides_g} g lipides`],
     ];
     document.getElementById('fiche-composition-rows').innerHTML = rows.map(([l, v]) => `<div class="fiche-row"><span class="fiche-row__label">${l}</span><span class="fiche-row__value">${v}</span></div>`).join('');
+  }
+
+  // ── Projection à 3 mois (12 semaines) à partir de l'écart calorique visé —
+  // indicative, pas une garantie : 1kg de masse grasse ≈ 7700 kcal.
+  function computeProjection(bio, body) {
+    const dailyDelta = body.tdee - body.objectifKcal; // > 0 : déficit (perte) · < 0 : surplus (prise)
+    const weightChange = (dailyDelta * 7 / 7700) * 12;
+    const poids = +(bio.poids - weightChange).toFixed(1);
+    const imc = +(poids / ((bio.taille / 100) ** 2)).toFixed(1);
+
+    let masseGrasse, masseMaigre;
+    if (bio.objectif === 'prise de muscle') {
+      masseMaigre = +(body.masseMaigre + Math.abs(weightChange)).toFixed(1);
+      masseGrasse = +(poids - masseMaigre).toFixed(1);
+    } else if (bio.objectif === 'maintien') {
+      masseGrasse = body.masseGrasse;
+      masseMaigre = body.masseMaigre;
+    } else {
+      masseGrasse = +Math.max(poids * 0.06, body.masseGrasse - Math.abs(weightChange)).toFixed(1);
+      masseMaigre = +(poids - masseGrasse).toFixed(1);
+    }
+    const bodyFatPercent = +((masseGrasse / poids) * 100).toFixed(1);
+    return { poids, imc, bodyFatPercent, masseGrasse, masseMaigre };
+  }
+
+  function projectionBar(label, startVal, endVal, unit, maxVal, color) {
+    const startPct = Math.min(100, (startVal / maxVal) * 100);
+    const endPct = Math.min(100, (endVal / maxVal) * 100);
+    return `
+      <div class="projection-bar-group">
+        <span class="projection-bar-group__label">${label}</span>
+        <div class="projection-bar-row">
+          <span class="projection-bar-row__tag">Départ</span>
+          <div class="projection-bar-track"><div class="projection-bar-fill" style="width:${startPct}%;background:#c7c2b4"></div></div>
+          <span class="projection-bar-row__val">${startVal}${unit}</span>
+        </div>
+        <div class="projection-bar-row">
+          <span class="projection-bar-row__tag">+3 mois</span>
+          <div class="projection-bar-track"><div class="projection-bar-fill" style="width:${endPct}%;background:${color}"></div></div>
+          <span class="projection-bar-row__val">${endVal}${unit}</span>
+        </div>
+      </div>`;
+  }
+
+  function renderProjection(bio, body) {
+    const proj = computeProjection(bio, body);
+    const deltaPoids = +(proj.poids - bio.poids).toFixed(1);
+    const sens = deltaPoids < 0 ? 'perdre' : deltaPoids > 0 ? 'prendre' : 'stabiliser';
+    document.getElementById('projection-intro').textContent = deltaPoids === 0
+      ? "En tenant ton objectif calorique, ton poids reste stable sur 3 mois — l'objectif ici est la composition, pas la balance."
+      : `En tenant ton objectif calorique au quotidien, tu peux ${sens} environ ${Math.abs(deltaPoids)} kg d'ici 3 mois. Une projection réaliste, pas une promesse.`;
+
+    const rows = [
+      ['Poids', `${bio.poids} kg`, `${proj.poids} kg`],
+      ['IMC', `${body.imc}`, `${proj.imc}`],
+      ['Taux de graisse estimé', `${body.bodyFatPercent}%`, `${proj.bodyFatPercent}%`],
+      ['Masse grasse estimée', `${body.masseGrasse} kg`, `${proj.masseGrasse} kg`],
+      ['Masse maigre estimée', `${body.masseMaigre} kg`, `${proj.masseMaigre} kg`],
+    ];
+    document.getElementById('projection-rows').innerHTML = rows.map(([l, v1, v2]) =>
+      `<div class="fiche-row"><span class="fiche-row__label">${l}</span><span class="fiche-row__value">${v1} → ${v2}</span></div>`
+    ).join('');
+
+    const maxPoids = Math.max(bio.poids, proj.poids) * 1.15;
+    document.getElementById('projection-bars').innerHTML =
+      projectionBar('Poids', bio.poids, proj.poids, ' kg', maxPoids, 'var(--kaki)') +
+      projectionBar('Taux de graisse', body.bodyFatPercent, proj.bodyFatPercent, '%', 45, 'var(--or)');
   }
 
   // ── Type de ventre (heuristique simple à partir des réponses, pas un diagnostic) ──
@@ -579,15 +661,18 @@
     const xLabels = ['20 ans', '30 ans', "Aujourd'hui", '+12 mois', '+24 mois'];
 
     function xPos(i) { return padL + (i / (xLabels.length - 1)) * plotW; }
-    function yPos(v) { return padT + plotH - (v / 100) * plotH; }
+    // v=0 (bonne réponse) en haut du graphe, v=100 (mauvaise réponse) en bas —
+    // ainsi une trajectoire qui se dégrade se lit naturellement comme une
+    // courbe qui descend, pas qui monte.
+    function yPos(v) { return padT + (v / 100) * plotH; }
 
     let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;font-family:Inter,sans-serif;">`;
 
-    // bandes de zone
+    // bandes de zone (yPos croît avec v, donc "from" est toujours au-dessus de "to")
     const bands = [{ from: 0, to: 30, color: '#eef0ea' }, { from: 30, to: 60, color: '#faf4e4' }, { from: 60, to: 100, color: '#f6e9e9' }];
     bands.forEach((b) => {
-      const y1 = yPos(b.to), y2 = yPos(b.from);
-      svg += `<rect x="${padL}" y="${y1}" width="${plotW}" height="${y2 - y1}" fill="${b.color}" />`;
+      const yTop = yPos(b.from), yBottom = yPos(b.to);
+      svg += `<rect x="${padL}" y="${yTop}" width="${plotW}" height="${yBottom - yTop}" fill="${b.color}" />`;
     });
 
     // lignes de séries
@@ -603,6 +688,10 @@
     xLabels.forEach((label, i) => {
       svg += `<text x="${xPos(i)}" y="${H - 8}" font-size="10.5" fill="#6b7280" text-anchor="middle">${label}</text>`;
     });
+
+    // axe Y : explique ce que représente le haut / le bas du graphe
+    svg += `<text x="${padL + 4}" y="${padT + 12}" font-size="10" font-weight="600" fill="#7a8a6a">Équilibre</text>`;
+    svg += `<text x="${padL + 4}" y="${padT + plotH - 6}" font-size="10" font-weight="600" fill="#a13a3a">Décrochage</text>`;
 
     svg += `</svg>`;
     document.getElementById('chart-container').innerHTML = svg;
