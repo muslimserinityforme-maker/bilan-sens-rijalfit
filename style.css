@@ -561,6 +561,17 @@ input:focus { outline: none; border-color: var(--or); }
 
 .precise-gauge__tick { flex-shrink: 0; text-align: center; }
 
+/* Mode graduations fixes (ex: taux de graisse) : positionnement absolu par
+   valeur réelle plutôt que par largeur de bande, pour éviter que les
+   étiquettes ne se chevauchent quand les bandes de couleur sont larges. */
+.precise-gauge__labels--ticks { position: relative; height: 28px; margin-top: 6px; }
+
+.precise-gauge__labels--ticks .precise-gauge__tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
 .precise-gauge__tick-range {
   display: block;
   font-family: 'Rajdhani', sans-serif;

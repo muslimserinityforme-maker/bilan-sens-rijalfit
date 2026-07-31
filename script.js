@@ -453,24 +453,31 @@
   // [domainMin, domainMax], curseur positionné exactement sur la valeur (pas
   // juste "dans" une case) — remplace les images à cases fixes, trop grossières
   // pour montrer précisément où se situe la personne.
-  function renderPreciseGauge(elId, bands, value, domainMin, domainMax) {
+  function renderPreciseGauge(elId, bands, value, domainMin, domainMax, ticks) {
     const domainSpan = domainMax - domainMin;
+    const colorAt = (v) => (bands.find((b) => v >= b.min && v < b.max) || bands[bands.length - 1]).color;
     const segs = bands.map((b) => {
       const from = Math.max(b.min, domainMin), to = Math.min(b.max, domainMax);
       const widthPct = Math.max(0, (to - from) / domainSpan * 100);
       return `<div class="precise-gauge__seg" style="width:${widthPct}%;background:${b.color}"></div>`;
     }).join('');
-    const labels = bands.map((b) => {
-      const from = Math.max(b.min, domainMin), to = Math.min(b.max, domainMax);
-      const widthPct = Math.max(0, (to - from) / domainSpan * 100);
-      return `<div class="precise-gauge__tick" style="width:${widthPct}%"><span class="precise-gauge__tick-range" style="color:${b.color}">${b.rangeLabel}</span><span class="precise-gauge__tick-label">${b.label}</span></div>`;
-    }).join('');
+    // Sans `ticks` explicite : une étiquette par bande (bon pour l'IMC, 5 bandes
+    // étroites). Avec `ticks` : graduations à intervalle fixe, indépendantes des
+    // bandes — nécessaire pour le taux de graisse (3 bandes trop larges, les
+    // étiquettes par bande se chevauchent).
+    const labels = ticks
+      ? ticks.map((v) => `<div class="precise-gauge__tick" style="left:${(v - domainMin) / domainSpan * 100}%"><span class="precise-gauge__tick-range" style="color:${colorAt(v)}">${v}${v === ticks[ticks.length - 1] ? '%+' : '%'}</span></div>`).join('')
+      : bands.map((b) => {
+          const from = Math.max(b.min, domainMin), to = Math.min(b.max, domainMax);
+          const widthPct = Math.max(0, (to - from) / domainSpan * 100);
+          return `<div class="precise-gauge__tick precise-gauge__tick--band" style="width:${widthPct}%"><span class="precise-gauge__tick-range" style="color:${b.color}">${b.rangeLabel}</span><span class="precise-gauge__tick-label">${b.label}</span></div>`;
+        }).join('');
     const cursorPct = Math.min(100, Math.max(0, (value - domainMin) / domainSpan * 100));
     document.getElementById(elId).innerHTML = `
       <div class="precise-gauge">
         <div class="precise-gauge__cursor" style="left:${cursorPct}%"><span></span></div>
         <div class="precise-gauge__track">${segs}</div>
-        <div class="precise-gauge__labels">${labels}</div>
+        <div class="precise-gauge__labels${ticks ? ' precise-gauge__labels--ticks' : ''}">${labels}</div>
       </div>`;
   }
 
@@ -532,7 +539,7 @@
 
     document.getElementById('bodyfat-range-text').textContent = `Ton taux de graisse corporelle estimé se situe entre ${low}% et ${high}% — dans la zone "${band.label}". Ce n'est pas une mesure clinique, mais une estimation fiable à partir de ton profil, suffisante pour situer où tu en es réellement.`;
 
-    renderPreciseGauge('gauge-bodyfat', BODYFAT_BANDS, body.bodyFatPercent, 5, 40);
+    renderPreciseGauge('gauge-bodyfat', BODYFAT_BANDS, body.bodyFatPercent, 5, 40, [10, 15, 20, 25, 30, 35, 40]);
 
     document.getElementById('bodyfat-explain').textContent = BODYFAT_EXPLAIN[band.label];
   }
