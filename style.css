@@ -542,14 +542,41 @@ input:focus { outline: none; border-color: var(--or); }
 
 .fiche-caption { font-size: .85rem; color: var(--gris); margin-top: 1rem; }
 
-/* ── Jauges (IMC / taux de graisse) ── */
+/* ── Jauges graduées (IMC / taux de graisse) : segments proportionnels
+   + curseur positionné exactement sur la valeur réelle ── */
 .gauge { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.gauge-static-img { display: block; width: 100%; border-radius: var(--radius); }
+.precise-gauge { position: relative; padding-top: 22px; }
 
-.bodyfat-gauge-wrap { position: relative; padding-top: 22px; }
+.precise-gauge__track {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+}
 
-.bodyfat-cursor {
+.precise-gauge__seg { flex-shrink: 0; }
+
+.precise-gauge__labels { display: flex; margin-top: 8px; }
+
+.precise-gauge__tick { flex-shrink: 0; text-align: center; }
+
+.precise-gauge__tick-range {
+  display: block;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: .78rem;
+}
+
+.precise-gauge__tick-label {
+  display: block;
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  color: var(--gris);
+}
+
+.precise-gauge__cursor {
   position: absolute;
   top: 0;
   transform: translateX(-50%);
@@ -558,21 +585,21 @@ input:focus { outline: none; border-color: var(--or); }
   align-items: center;
 }
 
-.bodyfat-cursor span {
+.precise-gauge__cursor span {
   width: 0;
   height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 10px solid var(--rouge);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 9px solid var(--rouge);
 }
 
-.bodyfat-cursor::after {
+.precise-gauge__cursor::after {
   content: '';
   position: absolute;
-  top: 10px;
+  top: 9px;
   left: 50%;
   width: 2px;
-  height: 14px;
+  height: 13px;
   background: var(--rouge);
 }
 

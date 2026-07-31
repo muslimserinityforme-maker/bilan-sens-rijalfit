@@ -441,6 +441,39 @@
     { min: 25, max: 999, rangeLabel: '25%+', label: 'Élevé', color: '#a13a3a', scale: 1.2 },
   ];
 
+  const IMC_BANDS = [
+    { min: 0, max: 18.5, rangeLabel: '< 18,5', label: 'Sous-poids', color: '#7a93a8' },
+    { min: 18.5, max: 25, rangeLabel: '18,5-24,9', label: 'Normal', color: '#4A5240' },
+    { min: 25, max: 30, rangeLabel: '25-29,9', label: 'Surpoids', color: '#C9A84C' },
+    { min: 30, max: 35, rangeLabel: '30-34,9', label: 'Obésité', color: '#c17f3a' },
+    { min: 35, max: 999, rangeLabel: '35+', label: 'Obésité sévère', color: '#a13a3a' },
+  ];
+
+  // Jauge graduée continue : segments proportionnels à leur largeur réelle sur
+  // [domainMin, domainMax], curseur positionné exactement sur la valeur (pas
+  // juste "dans" une case) — remplace les images à cases fixes, trop grossières
+  // pour montrer précisément où se situe la personne.
+  function renderPreciseGauge(elId, bands, value, domainMin, domainMax) {
+    const domainSpan = domainMax - domainMin;
+    const segs = bands.map((b) => {
+      const from = Math.max(b.min, domainMin), to = Math.min(b.max, domainMax);
+      const widthPct = Math.max(0, (to - from) / domainSpan * 100);
+      return `<div class="precise-gauge__seg" style="width:${widthPct}%;background:${b.color}"></div>`;
+    }).join('');
+    const labels = bands.map((b) => {
+      const from = Math.max(b.min, domainMin), to = Math.min(b.max, domainMax);
+      const widthPct = Math.max(0, (to - from) / domainSpan * 100);
+      return `<div class="precise-gauge__tick" style="width:${widthPct}%"><span class="precise-gauge__tick-range" style="color:${b.color}">${b.rangeLabel}</span><span class="precise-gauge__tick-label">${b.label}</span></div>`;
+    }).join('');
+    const cursorPct = Math.min(100, Math.max(0, (value - domainMin) / domainSpan * 100));
+    document.getElementById(elId).innerHTML = `
+      <div class="precise-gauge">
+        <div class="precise-gauge__cursor" style="left:${cursorPct}%"><span></span></div>
+        <div class="precise-gauge__track">${segs}</div>
+        <div class="precise-gauge__labels">${labels}</div>
+      </div>`;
+  }
+
   function renderFicheImc(bio, body) {
     const rows = [
       ['Taille', `${bio.taille} cm`],
@@ -450,7 +483,7 @@
       ["Niveau d'activité", ACTIVITE_LABELS[bio.activite] || bio.activite],
     ];
     document.getElementById('fiche-imc-rows').innerHTML = rows.map(([l, v]) => `<div class="fiche-row"><span class="fiche-row__label">${l}</span><span class="fiche-row__value">${v}</span></div>`).join('');
-    document.getElementById('gauge-imc').innerHTML = '<img src="images/imc-gauge.jpg" alt="Indice de masse corporelle (IMC)" class="gauge-static-img" />';
+    renderPreciseGauge('gauge-imc', IMC_BANDS, body.imc, 15, 40);
   }
 
   // Orientation, pas un diagnostic : approximée à partir de l'IMC (proxy simple
@@ -486,8 +519,6 @@
     document.getElementById('morphotype-text').textContent = m.text;
   }
 
-  const BODYFAT_CURSOR_LEFT = { Faible: '32%', Moyen: '50%', Élevé: '68%' };
-
   const BODYFAT_EXPLAIN = {
     Faible: "Ton corps garde peu de réserve — le sport et l'assiette font déjà leur travail. Le vrai enjeu à ce niveau, c'est de tenir cette discipline dans la durée, pas de la relâcher une fois le confort installé.",
     Moyen: "Ni sec ni en surcharge — un niveau intermédiaire qui peut basculer dans un sens ou dans l'autre selon ce que tu fais dans les prochains mois. C'est souvent le moment le plus facile pour reprendre le contrôle, avant que ça ne s'installe.",
@@ -501,11 +532,7 @@
 
     document.getElementById('bodyfat-range-text').textContent = `Ton taux de graisse corporelle estimé se situe entre ${low}% et ${high}% — dans la zone "${band.label}". Ce n'est pas une mesure clinique, mais une estimation fiable à partir de ton profil, suffisante pour situer où tu en es réellement.`;
 
-    document.getElementById('gauge-bodyfat').innerHTML = `
-      <div class="bodyfat-gauge-wrap">
-        <img src="images/bodyfat-gauge.jpg" alt="Repères de taux de graisse corporelle" class="gauge-static-img" />
-        <div class="bodyfat-cursor" style="left:${BODYFAT_CURSOR_LEFT[band.label]}"><span></span></div>
-      </div>`;
+    renderPreciseGauge('gauge-bodyfat', BODYFAT_BANDS, body.bodyFatPercent, 5, 40);
 
     document.getElementById('bodyfat-explain').textContent = BODYFAT_EXPLAIN[band.label];
   }
