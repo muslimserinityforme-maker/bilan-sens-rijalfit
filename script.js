@@ -675,14 +675,16 @@
   // ── Graphique de trajectoire (SVG fait maison, pas de dépendance externe) ──
   // Score sur une échelle 0-3 : la réponse du jour donne le score actuel
   // (A=3, B=2, C=1 — 0 n'est jamais une réponse, c'est juste le plancher de
-  // l'échelle). Sans intervention, on projette une meilleure situation dans
-  // le passé (20/30 ans) et une dégradation dans le futur (+12/+24 mois).
+  // l'échelle). Pas de points dans le passé (20/30 ans n'a pas de sens pour
+  // un prospect de 25 ans) — uniquement une projection à 3/6/9/12 mois si
+  // rien ne change, par paliers trimestriels.
   function projectScore(today) {
-    const twenty = Math.min(3, today + (3 - today) * 0.7 + 0.3);
-    const thirty = Math.min(3, today + (3 - today) * 0.35 + 0.1);
-    const in12 = Math.max(0, today - today * 0.30 - 0.15);
-    const in24 = Math.max(0, in12 - in12 * 0.40 - 0.15);
-    return [twenty, thirty, today, in12, in24];
+    const step = (v) => Math.max(0, v - v * 0.12 - 0.12);
+    const in3 = step(today);
+    const in6 = step(in3);
+    const in9 = step(in6);
+    const in12 = step(in9);
+    return [today, in3, in6, in9, in12];
   }
 
   function renderChart(answers) {
@@ -709,7 +711,7 @@
     const W = 640, H = 260, padL = 26, padR = 16, padT = 16, padB = 34;
     const plotW = W - padL - padR;
     const plotH = H - padT - padB;
-    const xLabels = ['20 ans', '30 ans', "Aujourd'hui", '+12 mois', '+24 mois'];
+    const xLabels = ["Aujourd'hui", '+3 mois', '+6 mois', '+9 mois', '+12 mois'];
 
     function xPos(i) { return padL + (i / (xLabels.length - 1)) * plotW; }
     // score 3 (le mieux) en haut du graphe, score 0 (le pire) en bas —
@@ -725,14 +727,12 @@
       svg += `<text x="${padL - 6}" y="${y + 3}" font-size="10" fill="#9a9488" text-anchor="end">${n}</text>`;
     });
 
-    // lignes de séries : plein pour le passé→aujourd'hui (index 0-2), pointillé
-    // pour la projection aujourd'hui→futur (index 2-4), les deux tronçons
-    // partageant le point "Aujourd'hui".
+    // lignes de séries : tout est projection à partir d'aujourd'hui, donc
+    // entièrement en pointillé — seul le point "Aujourd'hui" (premier cercle)
+    // représente une donnée réelle (la réponse du jour).
     series.forEach((s) => {
-      const pastPoints = s.values.slice(0, 3).map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
-      const futurePoints = s.values.slice(2).map((v, i) => `${xPos(i + 2)},${yPos(v)}`).join(' ');
-      svg += `<polyline points="${pastPoints}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
-      svg += `<polyline points="${futurePoints}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5,4" />`;
+      const points = s.values.map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
+      svg += `<polyline points="${points}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5,4" />`;
       s.values.forEach((v, i) => {
         svg += `<circle cx="${xPos(i)}" cy="${yPos(v)}" r="3.5" fill="${s.color}" />`;
       });
