@@ -178,10 +178,16 @@ main.container { padding-top: 56px; padding-bottom: 64px; }
   background-position: center 40%;
 }
 
-/* Même transparence équilibrée sur les 3 écrans */
+.photo-bg--gate {
+  background-image: url('images/hero-gate.jpg');
+  background-position: center;
+}
+
+/* Même transparence équilibrée sur les 4 écrans */
 .photo-bg--intro::before,
 .photo-bg--bio::before,
-.photo-bg--question::before {
+.photo-bg--question::before,
+.photo-bg--gate::before {
   background: rgba(245,240,232,.74);
 }
 
