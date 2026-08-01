@@ -120,6 +120,13 @@ main.container { padding-top: 56px; padding-bottom: 64px; }
 /* ── Intro ── */
 #screen-intro { text-align: center; }
 
+.hero-tagline {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--kaki-dark);
+  margin-bottom: .9rem;
+}
+
 .hero-title {
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
