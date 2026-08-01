@@ -352,7 +352,9 @@
       imc,
       score,
       zone: zone.name,
-      contexteProSignal: silentIndex >= 0 ? answers[silentIndex] : null,
+      contexteProSignal: silentIndex >= 0 && answers[silentIndex] !== null
+        ? ['Stable', 'Attention', 'Précaire'][answers[silentIndex]]
+        : null,
     };
 
     const submitBtn = gateForm.querySelector('button[type="submit"]');
