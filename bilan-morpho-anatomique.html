@@ -242,21 +242,70 @@
     font-size: 0.97rem;
   }
 
-  .btn-print {
-    display: block;
-    width: 100%;
-    margin-top: 14px;
-    background: transparent;
-    color: var(--texte-dim);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 13px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    cursor: pointer;
+  .email-box {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
   }
 
-  .btn-print:hover { color: var(--texte); border-color: var(--or-dim); }
+  .email-box > label {
+    display: block;
+    font-size: 0.92rem;
+    color: var(--texte);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  .email-row {
+    display: flex;
+    gap: 10px;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 500px) {
+    .email-row { flex-direction: column; }
+  }
+
+  .email-row input {
+    flex: 1;
+    background: var(--bg-field);
+    border: 1px solid var(--border);
+    color: var(--texte);
+    padding: 13px 14px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .email-row input:focus { outline: none; border-color: var(--or); }
+
+  .btn-email {
+    background: transparent;
+    color: var(--or);
+    border: 1px solid var(--or-dim);
+    border-radius: 8px;
+    padding: 13px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-email:hover { background: rgba(201,168,76,.1); }
+  .btn-email:disabled { opacity: .5; cursor: not-allowed; }
+
+  .email-status {
+    margin: 12px 0 0;
+    font-size: 0.85rem;
+    color: var(--texte-dim);
+    min-height: 1.2em;
+  }
+
+  .email-status.ok { color: #7bb88a; }
+  .email-status.err { color: var(--rouge); }
 
   footer {
     text-align: center;
@@ -266,7 +315,7 @@
   }
 
   @media print {
-    .card:first-of-type, .btn-print, footer { display: none !important; }
+    .card:first-of-type, .email-box, footer { display: none !important; }
     body { background: #fff; color: #111; padding: 0; }
     .card { background: #fff; border-color: #ccc; }
     .item__name { color: #a02020; }
@@ -391,7 +440,14 @@
       <a class="btn-cta" href="https://calendly.com/muslimserinityforme/programme-ton-bilan-intermediaire" target="_blank" rel="noopener">Prendre rendez-vous avec Matthieu</a>
     </div>
 
-    <button class="btn-print" id="btn-print">Imprimer / Sauvegarder en PDF</button>
+    <div class="email-box">
+      <label for="email-input">Reçois ce bilan par email</label>
+      <div class="email-row">
+        <input type="email" id="email-input" placeholder="ton@email.com" required>
+        <button class="btn-email" id="btn-email">Recevoir mon bilan</button>
+      </div>
+      <p class="email-status" id="email-status"></p>
+    </div>
   </div>
 
   <footer>Rijal Fit — Bilan Morpho-Anatomique</footer>
@@ -478,9 +534,16 @@ function buildContraindications(m) {
   return groups;
 }
 
+let currentParams = null;
+let currentItems = [];
+
 function renderResults(m) {
   const groups = buildContraindications(m);
   const order = ['Pectoraux', 'Dos', 'Épaules', 'Jambes', 'Biceps', 'Triceps'];
+
+  currentParams = m;
+  currentItems = [];
+  order.forEach((name) => groups[name].forEach((it) => currentItems.push({ group: name, ...it })));
 
   document.getElementById('groups').innerHTML = order.map((name) => {
     const items = groups[name];
@@ -493,6 +556,8 @@ function renderResults(m) {
     </div>`;
   }).join('');
 
+  document.getElementById('email-status').textContent = '';
+  document.getElementById('email-status').className = 'email-status';
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -514,7 +579,43 @@ document.getElementById('btn-generate').addEventListener('click', () => {
   renderResults(m);
 });
 
-document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-email').addEventListener('click', async () => {
+  const emailInput = document.getElementById('email-input');
+  const status = document.getElementById('email-status');
+  const email = emailInput.value.trim();
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    status.textContent = 'Entre une adresse email valide.';
+    status.className = 'email-status err';
+    return;
+  }
+
+  const btn = document.getElementById('btn-email');
+  btn.disabled = true;
+  status.textContent = 'Envoi en cours…';
+  status.className = 'email-status';
+
+  try {
+    const res = await fetch('/api/log-morpho-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        date: new Date().toISOString(),
+        params: currentParams,
+        items: currentItems,
+      }),
+    });
+    if (!res.ok) throw new Error('bad status');
+    status.textContent = 'Bilan envoyé — vérifie ta boîte mail (et les spams).';
+    status.className = 'email-status ok';
+  } catch (err) {
+    status.textContent = "Erreur d'envoi. Réessaie dans un instant.";
+    status.className = 'email-status err';
+  } finally {
+    btn.disabled = false;
+  }
+});
 </script>
 
 </body>

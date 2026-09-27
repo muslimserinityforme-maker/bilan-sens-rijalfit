@@ -19,15 +19,101 @@ var COLUMNS = [
   'Morphotype', 'Type de ventre', 'Analyse hormonale',
 ];
 
+var MORPHO_COLUMNS = [
+  'Date', 'Email', 'Clavicule', 'Bras', 'Torse', 'Valgus', 'Cage thoracique',
+  'Abdomen', 'Bassin', 'Dorsaux', 'Fémur', 'Tibia', 'Calcanéum',
+  'Nb exercices proscrits', 'Détail',
+];
+
 function doPost(e) {
   var data = JSON.parse(e.postData.contents);
 
-  appendToSheet(data);
-  sendBilanEmail(data);
+  if (data.type === 'morpho') {
+    appendMorphoToSheet(data);
+    sendMorphoBilanEmail(data);
+  } else {
+    appendToSheet(data);
+    sendBilanEmail(data);
+  }
 
   return ContentService
     .createTextOutput(JSON.stringify({ status: 'ok' }))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function appendMorphoToSheet(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Bilan Morpho');
+  if (!sheet) {
+    sheet = ss.insertSheet('Bilan Morpho');
+    sheet.appendRow(MORPHO_COLUMNS);
+  }
+
+  var p = data.params || {};
+  var items = data.items || [];
+  var detail = items.map(function (it) {
+    return '[' + it.group + '] ' + it.exercise;
+  }).join(' ; ');
+
+  sheet.appendRow([
+    data.date || '',
+    data.email || '',
+    p.clavicule || '',
+    p.bras || '',
+    p.torse || '',
+    p.valgus || '',
+    p.cage || '',
+    p.abdomen || '',
+    p.bassin || '',
+    p.dorsaux || '',
+    p.femur || '',
+    p.tibia || '',
+    p.calcaneum || '',
+    items.length,
+    detail,
+  ]);
+}
+
+function sendMorphoBilanEmail(data) {
+  if (!data.email) return;
+
+  var items = data.items || [];
+  var subject = 'Ton Bilan Morpho-Anatomique — Rijal Fit';
+
+  var order = ['Pectoraux', 'Dos', 'Épaules', 'Jambes', 'Biceps', 'Triceps'];
+  var byGroup = {};
+  order.forEach(function (g) { byGroup[g] = []; });
+  items.forEach(function (it) {
+    if (!byGroup[it.group]) byGroup[it.group] = [];
+    byGroup[it.group].push(it);
+  });
+
+  var body = 'Salam,\n\nVoici ton Bilan Morpho-Anatomique — les exercices à proscrire vu ta génétique :\n\n';
+  order.forEach(function (g) {
+    body += '— ' + g.toUpperCase() + ' —\n';
+    if (byGroup[g].length === 0) {
+      body += 'Aucune contre-indication.\n\n';
+    } else {
+      byGroup[g].forEach(function (it) {
+        body += '✕ ' + it.exercise + '\n   ' + it.reason + '\n';
+      });
+      body += '\n';
+    }
+  });
+
+  body +=
+    'Ce bilan est offert gratuitement par Rijal Fit. Tu veux un programme ' +
+    'complet adapté à ta génétique ?\n' +
+    'https://calendly.com/muslimserinityforme/programme-ton-bilan-intermediaire\n\n' +
+    'Ton corps a un droit sur toi.\n' +
+    '— Rijal Fit';
+
+  MailApp.sendEmail({
+    to: data.email,
+    subject: subject,
+    body: body,
+    name: 'Rijal Fit',
+  });
 }
 
 function appendToSheet(data) {
