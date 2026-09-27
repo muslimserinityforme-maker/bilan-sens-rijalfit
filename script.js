@@ -990,6 +990,10 @@
   }
 
   // ── Exercices à éviter (vu douleurs + mobilité + posture) ──
+  // Sources : douleurs/mobilité/posture (heuristique classique) + morphologie
+  // segmentaire (clavicules, cage thoracique, bras) d'après "Devenir Coach
+  // d'Élite — Compréhension anatomique" (conflits anatomiques développé
+  // couché/incliné, tractions, soulevé de terre).
   function renderAvoidList(morpho) {
     const avoid = [];
     const DOULEUR_AVOID = {
@@ -1007,6 +1011,12 @@
 
     if (morpho.posture === 'voutee') avoid.push('Développé couché en excès sans compenser par du tirage — ça accentue le déséquilibre épaules-vers-l\'avant.');
     if (morpho.posture === 'cambree') avoid.push('Extensions lombaires et crunchs classiques en excès — ça accentue la cambrure plutôt que de la corriger.');
+
+    // Morphologie segmentaire (clavicules / cage thoracique / bras)
+    if (morpho.clavicules_hanches === 'plus_larges') avoid.push('Développé couché et incliné à la barre en charge lourde — des clavicules larges poussent les épaules vers l\'avant et réduisent le recrutement des pectoraux ; privilégie le développé haltères ou les machines guidées, qui laissent les omoplates plus libres.');
+    if (morpho.cage_hanches === 'plus_courte') avoid.push('Développé couché de base en amplitude complète dès le départ si tu ne sens pas bien tes pectoraux travailler — isole d\'abord (écartés, poulie vis-à-vis) pour apprendre à les recruter avant de charger le mouvement.');
+    if (morpho.bras_jambes === 'plus_grand') avoid.push('Élévations latérales/frontales et rowing debout à charge élevée — avec des bras longs, le bras de levier est désavantageux ; reste sur des charges plus légères et un tempo contrôlé sur ces mouvements précis.');
+    if (morpho.bras_jambes === 'plus_petit') avoid.push('Soulevé de terre exécuté vite/sans échauffement — des bras courts demandent une amplitude de mouvement plus grande sur cet exercice précis, donc plus de technique et d\'effort qu\'il n\'y paraît.');
 
     if (avoid.length === 0) avoid.push('Aucune contre-indication particulière détectée — reste progressif quand même sur toute charge nouvelle.');
 
