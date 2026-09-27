@@ -228,6 +228,7 @@
   const MORPHO_FIELDS = [
     'tour_taille', 'tour_hanches', 'tour_cuisse', 'tour_bras', 'tour_poitrine',
     'bras_jambes', 'buste_jambes', 'clavicules_hanches', 'cage_hanches',
+    'valgus', 'bassin', 'abdomen', 'femur', 'tibia', 'calcaneum',
     'stockage_graisse', 'ventre_texture', 'posture', 'douleurs_articulaires', 'cellulite', 'ventre_soir',
     'mobilite_orteils', 'mobilite_accroupir', 'mobilite_bras',
   ];
@@ -400,6 +401,12 @@
       busteJambes: morpho.buste_jambes,
       claviculesHanches: morpho.clavicules_hanches,
       cageHanches: morpho.cage_hanches,
+      valgus: morpho.valgus,
+      bassin: morpho.bassin,
+      abdomen: morpho.abdomen,
+      femur: morpho.femur,
+      tibia: morpho.tibia,
+      calcaneum: morpho.calcaneum,
       stockageGraisse: morpho.stockage_graisse,
       ventreTexture: morpho.ventre_texture,
       posture: morpho.posture,
@@ -597,37 +604,75 @@
     document.getElementById('morphotype-text').textContent = `${m.text} ${m.meaning}`;
   }
 
-  // ── Silhouette (vue de profil, générée à partir de "Analyse sans photo") ──
-  // Chaque trait (cage thoracique, ventre, posture) déplace un point de
-  // contrôle du contour — pas une photo, une approximation visuelle honnête.
+  // ── Silhouette (vue de face, générée à partir de "Analyse sans photo") ──
+  // Chaque trait (épaules, cage thoracique, ventre, bassin) déplace un point
+  // de contrôle du contour — pas une photo, une approximation visuelle honnête.
   function renderSilhouette(morpho) {
-    const shoulderHW = { plus_larges: 50, moyenne: 42, plus_petites: 35 }[morpho.clavicules_hanches] ?? 42;
-    const chestForward = { plus_large: 16, moyenne: 7, plus_courte: 0 }[morpho.cage_hanches] ?? 7;
+    const shoulderHW = { plus_larges: 48, moyenne: 41, plus_petites: 35 }[morpho.clavicules_hanches] ?? 41;
+    const chestHW = { plus_large: 42, moyenne: 36, plus_courte: 31 }[morpho.cage_hanches] ?? 36;
     const ventreMou = morpho.ventre_texture === 'mou';
     const ventreCible = morpho.stockage_graisse === 'ventre';
-    const bellyForward = ventreCible ? (ventreMou ? 20 : 12) : (ventreMou ? 10 : 4);
-    const headForward = morpho.posture === 'voutee' ? 12 : 0;
-    const upperBackOut = morpho.posture === 'voutee' ? -10 : 0;
-    const lowerBackForward = morpho.posture === 'cambree' ? 10 : 0;
+    const waistHW = 24 + (ventreCible ? (ventreMou ? 16 : 10) : (ventreMou ? 8 : 3));
+    const hipHW = { large: 36, moyen: 31, etroit: 27 }[morpho.bassin] ?? 31;
+    const shoulderDrop = morpho.posture === 'voutee' ? 8 : 0;
+    const headTilt = morpho.posture === 'voutee' ? 5 : 0;
+
+    const cx = 110;
+    const shoulderY = 56 + shoulderDrop;
+    const chestY = 98 + shoulderDrop * 0.4;
+    const waistY = 150;
+    const hipY = 182;
+    const crotchY = 206;
+    const gap = 7;
+    const thighHW = hipHW * 0.5;
+    const kneeY = 286, kneeHW = thighHW * 0.68;
+    const calfY = 328, calfHW = kneeHW * 0.82;
+    const ankleY = 366, ankleHW = calfHW * 0.7;
+    const footY = 382, footHW = ankleHW * 1.5;
+    const armHW = 11 + (shoulderHW - 41) * 0.15;
+    const armTopY = shoulderY + 8, armBottomY = waistY + 25;
+
+    const torso = `
+      M ${cx - shoulderHW},${shoulderY}
+      Q ${cx - shoulderHW - 6},${shoulderY - 14} ${cx - shoulderHW * 0.4},${shoulderY - 20}
+      Q ${cx},${shoulderY - 24} ${cx + shoulderHW * 0.4},${shoulderY - 20}
+      Q ${cx + shoulderHW + 6},${shoulderY - 14} ${cx + shoulderHW},${shoulderY}
+      C ${cx + shoulderHW + 2},${shoulderY + 20} ${cx + chestHW},${chestY - 18} ${cx + chestHW},${chestY}
+      C ${cx + chestHW},${chestY + 20} ${cx + waistHW},${waistY - 16} ${cx + waistHW},${waistY}
+      C ${cx + waistHW},${waistY + 16} ${cx + hipHW},${hipY - 12} ${cx + hipHW},${hipY}
+      L ${cx + gap},${crotchY}
+      L ${cx - gap},${crotchY}
+      L ${cx - hipHW},${hipY}
+      C ${cx - hipHW},${hipY - 12} ${cx - waistHW},${waistY + 16} ${cx - waistHW},${waistY}
+      C ${cx - waistHW},${waistY - 16} ${cx - chestHW},${chestY + 20} ${cx - chestHW},${chestY}
+      C ${cx - chestHW},${chestY - 18} ${cx - shoulderHW - 2},${shoulderY + 20} ${cx - shoulderHW},${shoulderY}
+      Z`;
+
+    const leg = (s) => `
+      M ${cx + s * hipHW},${hipY}
+      C ${cx + s * hipHW},${hipY + 14} ${cx + s * thighHW * 1.05},${crotchY + 6} ${cx + s * thighHW},${crotchY + 20}
+      C ${cx + s * thighHW * 0.95},${kneeY - 30} ${cx + s * kneeHW * 1.2},${kneeY - 10} ${cx + s * kneeHW},${kneeY}
+      C ${cx + s * kneeHW * 0.85},${kneeY + 10} ${cx + s * calfHW * 1.1},${calfY - 20} ${cx + s * calfHW},${calfY}
+      C ${cx + s * calfHW * 0.9},${calfY + 18} ${cx + s * ankleHW * 1.1},${ankleY - 8} ${cx + s * ankleHW},${ankleY}
+      L ${cx + s * footHW},${footY}
+      L ${cx + s * gap * 0.7},${footY - 2}
+      C ${cx + s * gap * 0.5},${ankleY} ${cx + s * gap * 0.8},${kneeY + 20} ${cx + s * gap},${kneeY - 10}
+      L ${cx + s * gap},${crotchY}
+      Z`;
+
+    const arm = (s) => {
+      const armCenterX = cx + s * (shoulderHW + armHW - 3);
+      return `<rect x="${armCenterX - armHW}" y="${armTopY}" width="${armHW * 2}" height="${armBottomY - armTopY}" rx="${armHW}" fill="var(--kaki)" opacity=".85" />`;
+    };
 
     const svg = `
       <svg viewBox="0 0 220 400" class="silhouette-illustration" aria-hidden="true">
-        <path d="
-          M 100,18
-          C 90,18 84,28 86,38
-          L ${86 - upperBackOut},58
-          C ${82 - upperBackOut},80 ${82 - upperBackOut},105 86,128
-          C ${88 + lowerBackForward},155 ${90 + lowerBackForward},172 88,195
-          C 86,208 86,215 92,222
-          L 90,282 L 88,325 L 92,360 L 80,392 L 105,392 L 108,362 L 112,328 L 110,285
-          L 116,222
-          C 122,215 122,208 ${120 + bellyForward},195
-          C ${124 + bellyForward},172 ${122 + chestForward},150 ${118 + chestForward},128
-          C ${116 + chestForward},105 ${116 + chestForward},80 112,58
-          L ${110 + headForward},40
-          C ${112 + headForward},28 ${110 + headForward},18 100,18
-          Z" fill="var(--kaki)" opacity=".85" />
-        <circle cx="${100 + headForward * 0.6}" cy="22" r="15" fill="var(--kaki)" opacity=".85" />
+        <path d="${torso}" fill="var(--kaki)" opacity=".85" />
+        <path d="${leg(-1)}" fill="var(--kaki)" opacity=".85" />
+        <path d="${leg(1)}" fill="var(--kaki)" opacity=".85" />
+        ${arm(-1)}
+        ${arm(1)}
+        <circle cx="${cx + headTilt}" cy="26" r="17" fill="var(--kaki)" opacity=".85" />
       </svg>`;
     document.getElementById('silhouette-svg').innerHTML = svg;
 
@@ -990,37 +1035,99 @@
   }
 
   // ── Exercices à éviter (vu douleurs + mobilité + posture) ──
-  // Sources : douleurs/mobilité/posture (heuristique classique) + morphologie
-  // segmentaire (clavicules, cage thoracique, bras) d'après "Devenir Coach
-  // d'Élite — Compréhension anatomique" (conflits anatomiques développé
-  // couché/incliné, tractions, soulevé de terre).
+  // Moteur d'analyse morpho-anatomique — exercices à proscrire par groupe
+  // musculaire, selon les 11 paramètres morphologiques collectés dans
+  // "Analyse sans photo". Règles fournies par Matthieu (issues de "Devenir
+  // Coach d'Élite — Compréhension anatomique").
+  function buildExerciseContraindications(morpho) {
+    const clavicule = { plus_larges: 'large', moyenne: 'moyenne', plus_petites: 'etroite' }[morpho.clavicules_hanches];
+    const bras = { plus_grand: 'longs', identique: 'moyens', plus_petit: 'courts' }[morpho.bras_jambes];
+    const torse = { plus_long: 'long', identique: 'moyen', plus_court: 'court' }[morpho.buste_jambes];
+    const cage = { plus_large: 'ample', moyenne: 'moyenne', plus_courte: 'etroite' }[morpho.cage_hanches];
+    const valgus = morpho.valgus;
+    const bassin = morpho.bassin;
+    const femur = morpho.femur;
+    const calcaneum = morpho.calcaneum;
+
+    const groups = { Pectoraux: [], Dos: [], 'Épaules': [], Jambes: [], Biceps: [], Triceps: [] };
+    const add = (group, exercise, reason, severity) => groups[group].push({ exercise, reason, severity: severity || 'proscrit' });
+
+    // PECTORAUX
+    if (bras === 'longs' && cage === 'etroite') {
+      add('Pectoraux', 'Développé couché barre', "Bras longs + cage thoracique étroite : risque de déchirure des tendons et de conflit à la coiffe des rotateurs.");
+    } else if (bras === 'longs') {
+      add('Pectoraux', 'Développé couché', "Bras longs : à exécuter avec vigilance (amplitude accrue, plus de risque à l'épaule).", 'vigilance');
+      add('Pectoraux', 'Développé haltères incliné', "Bras longs : charge à limiter, même logique d'amplitude accrue.", 'vigilance');
+    }
+    if (clavicule === 'large') add('Pectoraux', 'Presse sur banc étroit', "Clavicules larges : omoplates trop mobiles sur cet appui resserré.");
+    if (valgus === 'prononce') add('Pectoraux', 'Dips', "Valgus de coude prononcé : les coudes partent vers l'extérieur, le transfert de charge se fait sur les trapèzes.");
+
+    // DOS
+    if (valgus === 'prononce') {
+      add('Dos', 'Tirage barre supination bilatéral', "Valgus de coude prononcé : contrainte excessive sur le coude en prise supination bilatérale.");
+      add('Dos', 'Rowing barre supination', "Valgus de coude prononcé : même contrainte au coude.");
+    }
+    if (bassin === 'etroit') {
+      add('Dos', 'Rowing barre classique', "Bassin étroit : stabilité réduite sur ce mouvement en charge.");
+      add('Dos', 'Soulevé de terre barre lourde', "Bassin étroit : stabilité réduite sous charge lourde.");
+    }
+    if (torse === 'long') add('Dos', 'Hyperextension banc classique', "Torse long : risque d'hyperlordose lombaire sur ce mouvement.");
+    if (bras === 'longs') add('Dos', 'Tractions barre bilatérales', "Bras longs : compensation par les biceps, risque articulaire accru.");
+
+    // ÉPAULES
+    if (valgus === 'prononce') {
+      add('Épaules', 'Tirage barre/haltères au menton', "Valgus de coude prononcé : contrainte au coude sur ce tirage vertical.");
+      add('Épaules', 'Développé militaire derrière la nuque', "Valgus de coude prononcé, combiné au risque de conflit à l'épaule sur ce trajet.");
+    }
+    if (bras === 'longs') {
+      add('Épaules', 'Élévations latérales haltères lourd', "Bras longs : bras de levier désavantageux en charge lourde sur ce mouvement.");
+      add('Épaules', 'Élévations frontales haltères bilatérales', "Bras longs : même logique de bras de levier désavantageux.");
+      add('Épaules', 'Élévations penchées avant haltères', "Bras longs : même logique de bras de levier désavantageux.");
+    }
+    if (clavicule === 'etroite') add('Épaules', 'Élévations toutes variantes lourd', "Clavicules étroites : les trapèzes deviennent dominants sur le mouvement en charge lourde.");
+
+    // JAMBES
+    if (femur === 'long') {
+      add('Jambes', 'Squat barre classique', "Fémur long : mécanique défavorable, bascule du buste vers l'avant.");
+      add('Jambes', 'Leg curl couché', "Fémur long : bras de levier défavorable sur cet appareil.");
+    }
+    if (femur === 'long' && bassin === 'etroit') add('Jambes', 'Soulevé de terre jambes tendues barre lourde', "Fémur long + bassin étroit : stabilité et mécanique lombaire compromises en charge lourde.");
+    if (calcaneum === 'long') add('Jambes', 'Squat amplitude profonde', "Calcanéum long : limite la profondeur atteignable sans compensation lombaire.");
+
+    // BICEPS
+    if (valgus === 'prononce') {
+      add('Biceps', 'Curl barre droite', "Valgus de coude prononcé : contrainte excessive en prise fixe bilatérale.");
+      add('Biceps', 'Curl barre EZ bilatéral', "Valgus de coude prononcé : même contrainte en prise bilatérale.");
+      add('Biceps', 'Machine curl pupitre barre/EZ', "Valgus de coude prononcé : bras fixé sur l'appareil, contrainte accrue.");
+    }
+    if (bras === 'longs') add('Biceps', 'Câble curl bilatéral prise large', "Bras longs : amplitude et bras de levier désavantageux en prise large.");
+
+    // TRICEPS
+    if (valgus === 'prononce') {
+      add('Triceps', 'Extension barre/EZ', "Valgus de coude prononcé : contrainte au coude sur ce mouvement en extension.");
+      add('Triceps', 'Dips triceps', "Valgus de coude prononcé : coudes vers l'extérieur, transfert de charge défavorable.");
+      add('Triceps', 'Machines triceps prise large', "Valgus de coude prononcé : la prise large accentue la contrainte au coude.");
+    }
+
+    return groups;
+  }
+
   function renderAvoidList(morpho) {
-    const avoid = [];
-    const DOULEUR_AVOID = {
-      genoux: 'Squats/fentes profonds à charge lourde, course sur sol dur — privilégie leg press ou vélo en attendant.',
-      dos: 'Soulevé de terre jambes tendues et mouvements en flexion lombaire chargée — privilégie le gainage neutre.',
-      epaules: 'Développé militaire et dips à amplitude complète — privilégie les mouvements à amplitude réduite, sans douleur.',
-      hanches: 'Fentes profondes et abductions chargées — privilégie la mobilité de hanche avant tout renforcement.',
-      poignets: 'Pompes/planches en appui poignet fléchi — utilise des poignées ou appuis sur avant-bras.',
-    };
-    if (DOULEUR_AVOID[morpho.douleurs_articulaires]) avoid.push(DOULEUR_AVOID[morpho.douleurs_articulaires]);
-
-    if (morpho.mobilite_accroupir === 'difficile') avoid.push('Squats profonds à charge lourde tant que la mobilité de cheville/hanche n\'est pas améliorée — risque de compensation au dos ou aux genoux.');
-    if (morpho.mobilite_bras === 'difficile') avoid.push('Développé nuque et tirage derrière la tête — risque de conflit à l\'épaule avec une mobilité limitée à ce niveau.');
-    if (morpho.mobilite_orteils === 'difficile') avoid.push('Soulevé de terre jambes tendues sans échauffement — la raideur des ischio-jambiers augmente le risque au bas du dos.');
-
-    if (morpho.posture === 'voutee') avoid.push('Développé couché en excès sans compenser par du tirage — ça accentue le déséquilibre épaules-vers-l\'avant.');
-    if (morpho.posture === 'cambree') avoid.push('Extensions lombaires et crunchs classiques en excès — ça accentue la cambrure plutôt que de la corriger.');
-
-    // Morphologie segmentaire (clavicules / cage thoracique / bras)
-    if (morpho.clavicules_hanches === 'plus_larges') avoid.push('Développé couché et incliné à la barre en charge lourde — des clavicules larges poussent les épaules vers l\'avant et réduisent le recrutement des pectoraux ; privilégie le développé haltères ou les machines guidées, qui laissent les omoplates plus libres.');
-    if (morpho.cage_hanches === 'plus_courte') avoid.push('Développé couché de base en amplitude complète dès le départ si tu ne sens pas bien tes pectoraux travailler — isole d\'abord (écartés, poulie vis-à-vis) pour apprendre à les recruter avant de charger le mouvement.');
-    if (morpho.bras_jambes === 'plus_grand') avoid.push('Élévations latérales/frontales et rowing debout à charge élevée — avec des bras longs, le bras de levier est désavantageux ; reste sur des charges plus légères et un tempo contrôlé sur ces mouvements précis.');
-    if (morpho.bras_jambes === 'plus_petit') avoid.push('Soulevé de terre exécuté vite/sans échauffement — des bras courts demandent une amplitude de mouvement plus grande sur cet exercice précis, donc plus de technique et d\'effort qu\'il n\'y paraît.');
-
-    if (avoid.length === 0) avoid.push('Aucune contre-indication particulière détectée — reste progressif quand même sur toute charge nouvelle.');
-
-    document.getElementById('avoid-list').innerHTML = avoid.map((a) => `<li>${a}</li>`).join('');
+    const groups = buildExerciseContraindications(morpho);
+    const order = ['Pectoraux', 'Dos', 'Épaules', 'Jambes', 'Biceps', 'Triceps'];
+    document.getElementById('avoid-groups').innerHTML = order.map((name) => {
+      const items = groups[name];
+      if (items.length === 0) {
+        return `<div class="avoid-group"><h3 class="avoid-group__title">${name}</h3><p class="avoid-group__ok">✓ Aucune contre-indication pour ce groupe.</p></div>`;
+      }
+      return `<div class="avoid-group">
+        <h3 class="avoid-group__title">${name}</h3>
+        <ul class="avoid-group__list">
+          ${items.map((it) => `<li class="avoid-item avoid-item--${it.severity}"><span class="avoid-item__exercise">${it.exercise}${it.severity === 'vigilance' ? ' (avec vigilance)' : ''}</span><span class="avoid-item__reason">${it.reason}</span></li>`).join('')}
+        </ul>
+      </div>`;
+    }).join('');
+    document.getElementById('avoid-signature').textContent = 'Ce bilan est offert par Rijal Fit. Pour un programme complet personnalisé à ta génétique, contacte Matthieu.';
   }
 
   function renderZonesGrid(activeZone) {

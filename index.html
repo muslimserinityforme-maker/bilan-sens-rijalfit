@@ -161,6 +161,61 @@
         </div>
       </div>
 
+      <h3 class="morpho-axis-title">Morphologie détaillée (pour le choix de tes exercices)</h3>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-valgus">Bras tendus devant toi, coudes vers l'intérieur : tes avant-bras s'écartent... *</label>
+          <select id="m-valgus" name="valgus" required>
+            <option value="leger">Légèrement (léger valgus)</option>
+            <option value="prononce">Nettement, en V marqué (valgus prononcé)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-bassin">Ton bassin, tu le décrirais comme *</label>
+          <select id="m-bassin" name="bassin" required>
+            <option value="large">Large</option>
+            <option value="moyen" selected>Moyen</option>
+            <option value="etroit">Étroit</option>
+          </select>
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-abdomen">La distance entre le bas de tes côtes et le haut de ton bassin te semble *</label>
+          <select id="m-abdomen" name="abdomen" required>
+            <option value="long">Longue</option>
+            <option value="moyen" selected>Moyenne</option>
+            <option value="court">Courte</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-femur">Assis sur une chaise standard, tes cuisses (fémurs) te semblent *</label>
+          <select id="m-femur" name="femur" required>
+            <option value="long">Longues</option>
+            <option value="moyen" selected>Moyennes</option>
+            <option value="court">Courtes</option>
+          </select>
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-tibia">Comparés à tes cuisses, tes tibias (entre genou et cheville) te semblent *</label>
+          <select id="m-tibia" name="tibia" required>
+            <option value="long">Longs</option>
+            <option value="moyen" selected>Moyens</option>
+            <option value="court">Courts</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-calcaneum">Ton talon (la partie osseuse qui dépasse derrière la cheville) te semble *</label>
+          <select id="m-calcaneum" name="calcaneum" required>
+            <option value="long">Long, très saillant</option>
+            <option value="moyen" selected>Moyen</option>
+            <option value="court">Court, peu marqué</option>
+          </select>
+        </div>
+      </div>
+
       <h3 class="morpho-axis-title">Ton corps au quotidien</h3>
       <div class="bio-fields bio-fields--2">
         <div class="field">
@@ -427,9 +482,10 @@
 
       <section class="fiche-section">
         <p class="eyebrow">À éviter pour l'instant</p>
-        <h2 class="section-title">Exercices déconseillés vu ton profil</h2>
-        <ul class="avoid-list" id="avoid-list"></ul>
-        <p class="fiche-caption">À réintroduire progressivement une fois la mobilité et les douleurs améliorées.</p>
+        <h2 class="section-title">Exercices déconseillés vu ta morphologie</h2>
+        <div id="avoid-groups" class="avoid-groups"></div>
+        <p id="avoid-signature" class="fiche-caption avoid-signature"></p>
+        <p class="fiche-caption">Analyse morpho-anatomique indicative à partir de tes réponses — pas un bilan en présentiel avec un coach.</p>
       </section>
 
       <section class="message-section">
