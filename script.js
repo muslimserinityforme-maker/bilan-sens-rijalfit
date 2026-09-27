@@ -162,11 +162,13 @@
   let currentQuestion = -1; // -1 = intro
   const answers = new Array(QUESTIONS.length).fill(null);
   const bio = { age: null, taille: null, poids: null, activite: null, objectif: null };
+  const morpho = {};
 
   // ── DOM refs ──
   const screens = {
     intro: document.getElementById('screen-intro'),
     bio: document.getElementById('screen-bio'),
+    morpho: document.getElementById('screen-morpho'),
     question: document.getElementById('screen-question'),
     gate: document.getElementById('screen-gate'),
     result: document.getElementById('screen-result'),
@@ -219,6 +221,35 @@
     bio.activite = activite.value;
     bio.objectif = objectif.value;
 
+    showScreen('morpho');
+  });
+
+  // ── Analyse sans photo (morphologie) ──
+  const MORPHO_FIELDS = [
+    'tour_taille', 'tour_hanches', 'tour_cuisse', 'tour_bras', 'tour_poitrine',
+    'bras_jambes', 'buste_jambes', 'clavicules_hanches', 'cage_hanches',
+    'stockage_graisse', 'ventre_texture', 'posture', 'douleurs_articulaires', 'cellulite', 'ventre_soir',
+    'mobilite_orteils', 'mobilite_accroupir', 'mobilite_bras',
+  ];
+  const MORPHO_NUMERIC = ['tour_taille', 'tour_hanches', 'tour_cuisse', 'tour_bras', 'tour_poitrine'];
+  const morphoError = document.getElementById('morpho-error');
+  document.getElementById('morpho-continue-btn').addEventListener('click', () => {
+    const values = {};
+    let missing = false;
+    MORPHO_FIELDS.forEach((field) => {
+      const el = document.querySelector(`[name="${field}"]`);
+      if (!el.value) missing = true;
+      values[field] = MORPHO_NUMERIC.includes(field) ? Number(el.value) : el.value;
+    });
+
+    if (missing) {
+      morphoError.textContent = 'Merci de remplir les champs pour continuer.';
+      morphoError.hidden = false;
+      return;
+    }
+    morphoError.hidden = true;
+
+    Object.assign(morpho, values);
     currentQuestion = 0;
     renderQuestion(0);
   });
@@ -278,7 +309,7 @@
       currentQuestion -= 1;
       renderQuestion(currentQuestion);
     } else {
-      showScreen('bio');
+      showScreen('morpho');
     }
   });
 
@@ -337,6 +368,10 @@
     const zone = getZone(score);
     const silentIndex = QUESTIONS.findIndex((q) => q.silent);
     const imc = bio.taille ? +(bio.poids / ((bio.taille / 100) ** 2)).toFixed(1) : null;
+    const body = computeBodyComposition(bio.age, bio.taille, bio.poids, bio.activite, bio.objectif);
+    const morphotypeName = MORPHOTYPES[getMorphotypeKey(body.imc)].name;
+    const bellyTypeName = BELLY_TYPES.find((t) => t.key === determineBellyType(answers, bio)).name;
+    const hormonal = computeHormonal(answers, bio, morpho);
 
     const lead = {
       date: new Date().toISOString(),
@@ -355,6 +390,29 @@
       contexteProSignal: silentIndex >= 0 && answers[silentIndex] !== null
         ? ['Stable', 'Attention', 'Précaire'][answers[silentIndex]]
         : null,
+      // Analyse sans photo — mensurations et observations
+      tourTaille: morpho.tour_taille,
+      tourHanches: morpho.tour_hanches,
+      tourCuisse: morpho.tour_cuisse,
+      tourBras: morpho.tour_bras,
+      tourPoitrine: morpho.tour_poitrine,
+      brasJambes: morpho.bras_jambes,
+      busteJambes: morpho.buste_jambes,
+      claviculesHanches: morpho.clavicules_hanches,
+      cageHanches: morpho.cage_hanches,
+      stockageGraisse: morpho.stockage_graisse,
+      ventreTexture: morpho.ventre_texture,
+      posture: morpho.posture,
+      douleursArticulaires: morpho.douleurs_articulaires,
+      cellulite: morpho.cellulite,
+      ventreSoir: morpho.ventre_soir,
+      mobiliteOrteils: morpho.mobilite_orteils,
+      mobiliteAccroupir: morpho.mobilite_accroupir,
+      mobiliteBras: morpho.mobilite_bras,
+      // Synthèse de l'analyse (pour la Sheet + l'email)
+      morphotype: morphotypeName,
+      typeVentre: bellyTypeName,
+      hormonalTitre: hormonal.title,
     };
 
     const submitBtn = gateForm.querySelector('button[type="submit"]');
@@ -404,10 +462,14 @@
     const body = computeBodyComposition(bio.age, bio.taille, bio.poids, bio.activite, bio.objectif);
     renderFicheImc(bio, body);
     renderMorphotype(body, bio);
+    renderSilhouette(morpho);
     renderBodyFat(body);
     renderFicheComposition(body);
     renderProjection(bio, body);
     renderBellyType(answers, bio);
+    renderAnalysisGrid(zone, answers, bio, morpho, body);
+    renderHormonal(answers, bio, morpho);
+    renderAvoidList(morpho);
 
     document.getElementById('message-zone-text').textContent = zone.message;
     const topIndex = getTopProblemIndex();
@@ -430,7 +492,8 @@
     const masseMaigre = +(poids - masseGrasse).toFixed(1);
     const bmr = Math.round(370 + 21.6 * masseMaigre);
     const tdee = Math.round(bmr * (ACTIVITY_MULTIPLIER[activite] || 1.375));
-    const objectifKcal = Math.round(tdee * (CALORIE_ADJUSTMENT[objectif] || 1.0));
+    // Plancher Rijal Fit : jamais moins de 1500 kcal/jour (décision du 26/09/2026).
+    const objectifKcal = Math.max(1500, Math.round(tdee * (CALORIE_ADJUSTMENT[objectif] || 1.0)));
     const proteines_g = Math.round(2.0 * poids);
     const lipides_g = Math.round(0.9 * poids);
     const glucides_g = Math.max(50, Math.round((objectifKcal - (proteines_g * 4 + lipides_g * 9)) / 4));
@@ -503,29 +566,87 @@
       name: 'Ectomorphe',
       img: 'images/morphotype-ectomorphe.jpg',
       text: "Une ossature fine et un métabolisme rapide : tu as naturellement du mal à prendre du poids, muscle comme graisse. Le sport te demande souvent plus d'énergie que tu n'en as en réserve — l'enjeu pour toi, c'est de manger assez, pas de te restreindre.",
+      meaning: "Concrètement, ça veut dire : privilégier les charges lourdes et peu de répétitions plutôt que le cardio à outrance, augmenter les calories avant d'augmenter le volume d'entraînement, et accepter que les résultats visibles prennent un peu plus de temps à apparaître — ce n'est pas un manque d'efficacité, c'est ta biologie.",
     },
     mesomorphe: {
       name: 'Mésomorphe',
       img: 'images/morphotype-mesomorphe.jpg',
       text: "Une carrure naturellement athlétique : tu réagis vite à l'entraînement, tu prends du muscle et perds du gras plus facilement que la moyenne. Le risque, c'est de compter sur cette facilité et de relâcher le cadre — ce profil se dégrade vite dès que l'hygiène de vie part en vrille.",
+      meaning: "Concrètement, ça veut dire : tu peux varier les styles d'entraînement sans perdre tes acquis, mais le vrai enjeu n'est pas physique — c'est la régularité. Ce profil échoue rarement par manque de capacité, presque toujours par manque de cadre tenu dans la durée.",
     },
     endomorphe: {
       name: 'Endomorphe',
       img: 'images/morphotype-endomorphe.jpg',
       text: "Une ossature large et un métabolisme plus lent : ton corps stocke plus facilement, surtout au niveau du ventre. Ce n'est pas un manque de volonté — c'est ta base de départ. Bien encadré, c'est souvent le profil qui progresse le plus vite une fois le déclic fait.",
+      meaning: "Concrètement, ça veut dire : le levier le plus rentable pour toi est l'alimentation (un déficit calorique modéré et tenu) plus que le volume d'entraînement, le cardio régulier aide particulièrement ce profil, et la marge de progrès est réelle — le corps répond bien une fois la constance installée.",
     },
   };
 
+  function getMorphotypeKey(imc) {
+    if (imc < 21) return 'ectomorphe';
+    if (imc < 27) return 'mesomorphe';
+    return 'endomorphe';
+  }
+
   function renderMorphotype(body, bio) {
-    let key;
-    if (body.imc < 21) key = 'ectomorphe';
-    else if (body.imc < 27) key = 'mesomorphe';
-    else key = 'endomorphe';
+    const key = getMorphotypeKey(body.imc);
     const m = MORPHOTYPES[key];
     document.getElementById('morphotype-img').src = m.img;
     document.getElementById('morphotype-img').alt = m.name;
     document.getElementById('morphotype-name').textContent = m.name;
-    document.getElementById('morphotype-text').textContent = m.text;
+    document.getElementById('morphotype-text').textContent = `${m.text} ${m.meaning}`;
+  }
+
+  // ── Silhouette (vue de profil, générée à partir de "Analyse sans photo") ──
+  // Chaque trait (cage thoracique, ventre, posture) déplace un point de
+  // contrôle du contour — pas une photo, une approximation visuelle honnête.
+  function renderSilhouette(morpho) {
+    const shoulderHW = { plus_larges: 50, moyenne: 42, plus_petites: 35 }[morpho.clavicules_hanches] ?? 42;
+    const chestForward = { plus_large: 16, moyenne: 7, plus_courte: 0 }[morpho.cage_hanches] ?? 7;
+    const ventreMou = morpho.ventre_texture === 'mou';
+    const ventreCible = morpho.stockage_graisse === 'ventre';
+    const bellyForward = ventreCible ? (ventreMou ? 20 : 12) : (ventreMou ? 10 : 4);
+    const headForward = morpho.posture === 'voutee' ? 12 : 0;
+    const upperBackOut = morpho.posture === 'voutee' ? -10 : 0;
+    const lowerBackForward = morpho.posture === 'cambree' ? 10 : 0;
+
+    const svg = `
+      <svg viewBox="0 0 220 400" class="silhouette-illustration" aria-hidden="true">
+        <path d="
+          M 100,18
+          C 90,18 84,28 86,38
+          L ${86 - upperBackOut},58
+          C ${82 - upperBackOut},80 ${82 - upperBackOut},105 86,128
+          C ${88 + lowerBackForward},155 ${90 + lowerBackForward},172 88,195
+          C 86,208 86,215 92,222
+          L 90,282 L 88,325 L 92,360 L 80,392 L 105,392 L 108,362 L 112,328 L 110,285
+          L 116,222
+          C 122,215 122,208 ${120 + bellyForward},195
+          C ${124 + bellyForward},172 ${122 + chestForward},150 ${118 + chestForward},128
+          C ${116 + chestForward},105 ${116 + chestForward},80 112,58
+          L ${110 + headForward},40
+          C ${112 + headForward},28 ${110 + headForward},18 100,18
+          Z" fill="var(--kaki)" opacity=".85" />
+        <circle cx="${100 + headForward * 0.6}" cy="22" r="15" fill="var(--kaki)" opacity=".85" />
+      </svg>`;
+    document.getElementById('silhouette-svg').innerHTML = svg;
+
+    const SEG_LABEL = { plus_grand: 'plus grands que la moyenne', identique: 'proportionnés', plus_petit: 'plus courts que la moyenne' };
+    const BUSTE_LABEL = { plus_long: 'un buste plus long que les jambes', identique: 'un buste bien proportionné', plus_court: 'un buste plus court que les jambes' };
+    const CAGE_LABEL = { plus_large: 'une cage thoracique ample', moyenne: 'une cage thoracique moyenne', plus_courte: 'une cage thoracique plus étroite' };
+    const EPAULES_LABEL = { plus_larges: 'des épaules larges', moyenne: 'des épaules moyennes', plus_petites: 'des épaules plus étroites' };
+    const POSTURE_LABEL = { voutee: 'une posture voûtée, épaules qui tombent vers l\'avant', cambree: 'une posture cambrée, le bas du dos creusé', droite: 'une posture droite, bien alignée' };
+
+    const traits = [
+      ['Cage thoracique', CAGE_LABEL[morpho.cage_hanches]],
+      ['Épaules', EPAULES_LABEL[morpho.clavicules_hanches]],
+      ['Bras', SEG_LABEL[morpho.bras_jambes]],
+      ['Buste / jambes', BUSTE_LABEL[morpho.buste_jambes]],
+      ['Posture', POSTURE_LABEL[morpho.posture]],
+    ];
+    document.getElementById('silhouette-traits').innerHTML = traits.map(([label, val]) =>
+      `<div class="silhouette-trait"><span class="silhouette-trait__label">${label}</span><span class="silhouette-trait__val">${val}</span></div>`
+    ).join('');
   }
 
   const BODYFAT_EXPLAIN = {
@@ -627,10 +748,10 @@
 
   // ── Type de ventre (heuristique simple à partir des réponses, pas un diagnostic) ──
   const BELLY_TYPES = [
-    { key: 'stress', name: 'Ventre du stress', desc: "Lié au cortisol — tension nerveuse, sommeil dégradé, ventre qui se durcit sans forcément grossir." },
-    { key: 'viscerale', name: 'Graisse viscérale', desc: "La plus profonde, autour des organes — plus fréquente avec l'âge et la sédentarité prolongée." },
-    { key: 'souscutanee', name: 'Graisse sous-cutanée', desc: "Sous la peau, la plus visible et la plus courante — répond bien à un travail combiné nutrition/sport." },
-    { key: 'leger', name: 'Léger, en installation', desc: "Rien d'installé durablement — le bon moment pour agir avant que ça ne se fixe." },
+    { key: 'stress', name: 'Ventre du stress', desc: "Lié au cortisol — tension nerveuse, sommeil dégradé, ventre qui se durcit sans forcément grossir.", meaning: "Qu'est-ce que ça veut dire : ton corps reste en alerte en continu, il stocke autour du ventre par réflexe de survie. Le levier n°1 n'est pas l'assiette ni le sport — c'est le sommeil et la gestion du stress (cohérence cardiaque, coupures d'écran le soir)." },
+    { key: 'viscerale', name: 'Graisse viscérale', desc: "La plus profonde, autour des organes — plus fréquente avec l'âge et la sédentarité prolongée.", meaning: "Qu'est-ce que ça veut dire : c'est le type le plus important à traiter en priorité sur le plan santé — elle pèse sur le cœur et l'énergie au quotidien. La bonne nouvelle : elle répond vite au cardio régulier et à un déficit calorique modéré." },
+    { key: 'souscutanee', name: 'Graisse sous-cutanée', desc: "Sous la peau, la plus visible et la plus courante — répond bien à un travail combiné nutrition/sport.", meaning: "Qu'est-ce que ça veut dire : c'est la plus simple à faire bouger avec de la constance — nutrition + renforcement musculaire réguliers, sans besoin de méthode extrême." },
+    { key: 'leger', name: 'Léger, en installation', desc: "Rien d'installé durablement — le bon moment pour agir avant que ça ne se fixe.", meaning: "Qu'est-ce que ça veut dire : tu es dans la meilleure fenêtre pour agir — avant que ça devienne une habitude du corps. Un cadre simple et tenu maintenant t'évite un travail bien plus long dans 2-3 ans." },
   ];
 
   function determineBellyType(answers, bio) {
@@ -649,10 +770,247 @@
         <div>
           <div class="bellytype-card__name">${t.name}</div>
           <div class="bellytype-card__desc">${t.desc}</div>
+          ${t.key === activeKey ? `<div class="bellytype-card__meaning">${t.meaning}</div>` : ''}
         </div>
         ${t.key === activeKey ? '<span class="bellytype-card__tag">Le tien</span>' : ''}
       </div>
     `).join('');
+  }
+
+  // ══ ANALYSE COMPLÈTE (physique / alimentaire / psychologique / environnemental) ══
+  // Chaque catégorie combine 3 tips d'un driver principal + 1 tip de deux
+  // drivers secondaires = 5 conseils personnalisés, sans appel IA.
+
+  const PHYSIQUE_BASE = {
+    ectomorphe: [
+      "Privilégie les charges lourdes et peu de répétitions (6-10 reps) plutôt que le cardio à outrance — c'est ce qui construit le plus vite sur ton profil.",
+      "Augmente tes calories avant d'augmenter ton volume d'entraînement : sans surplus, ton corps n'a rien à construire.",
+      "Limite le cardio à 1-2 séances courtes par semaine — au-delà, tu brûles l'énergie dont tu as besoin pour progresser.",
+    ],
+    mesomorphe: [
+      "Varie les styles d'entraînement tous les 6-8 semaines — ton corps s'adapte vite, il faut le surprendre pour continuer à progresser.",
+      "Fixe-toi un cadre non négociable (jours fixes, horaires fixes) — ton profil échoue rarement par incapacité physique, presque toujours par manque de régularité.",
+      "Ne saute pas les phases de récupération sous prétexte que \"ça va vite\" — c'est là que la blessure ou le plateau arrivent le plus souvent.",
+    ],
+    endomorphe: [
+      "Priorise le déficit calorique modéré (-15 à -20%) avant d'ajouter du volume d'entraînement — c'est le levier le plus rentable pour toi.",
+      "Ajoute 2-3 séances de cardio par semaine, même courtes (20-30 min) — ce profil y répond particulièrement bien.",
+      "Mesure ta progression au tour de taille et aux photos plutôt qu'à la balance seule — la composition change avant le poids total.",
+    ],
+  };
+  const PHYSIQUE_POSTURE = {
+    voutee: "Renforce le haut du dos (rowing, tirage) et étire les pectoraux régulièrement — c'est ce déséquilibre précis qui entretient une posture voûtée.",
+    cambree: "Travaille le gainage (planche, respiration abdominale) et étire les fléchisseurs de hanche — c'est ce qui accentue une cambrure marquée.",
+    droite: "Ta posture est un bon point d'appui — garde une routine de mobilité légère pour la préserver dans la durée.",
+  };
+  const PHYSIQUE_MOBILITE = {
+    mobilite_orteils: "Ta mobilité des ischio-jambiers est limitée — 5 minutes d'étirement des jambes tendues avant chaque séance t'évitera bien des douleurs de dos.",
+    mobilite_accroupir: "Ta mobilité de cheville/hanche en squat est limitée — travaille des squats assistés (talons surélevés) avant de charger le mouvement.",
+    mobilite_bras: "Ta mobilité d'épaule est limitée — mobilise les épaules avant chaque séance (cercles, élastique) avant tout mouvement au-dessus de la tête.",
+    ok: "Ta mobilité de base est correcte sur les 3 tests — continue à l'entretenir, c'est ce qui évitera les blessures plus tard.",
+  };
+
+  const ALIMENTAIRE_BASE = {
+    ventre: [
+      "Réduis en priorité le sucre rapide et l'alcool (même occasionnel) — c'est ce qui pèse le plus sur le stockage abdominal.",
+      "Mange lentement et jusqu'à 80% de satiété — le ventre est la zone la plus sensible aux repas pris trop vite.",
+      "Priorise les fibres (légumes, légumineuses) à chaque repas — elles limitent directement le stockage viscéral.",
+    ],
+    hanches: [
+      "Surveille les glucides raffinés le soir — c'est souvent ce qui alimente le stockage sur cette zone.",
+      "Ajoute des protéines à chaque repas (viande, poisson, œufs, légumineuses) pour préserver le muscle pendant la perte.",
+      "Hydrate-toi suffisamment (1,5-2L/jour) — la rétention d'eau amplifie souvent cette zone en particulier.",
+    ],
+    cuisses: [
+      "Cette zone répond bien à la régularité plus qu'à la restriction — mieux vaut un cadre tenable 7 jours/7 qu'un régime strict 3 jours.",
+      "Associe systématiquement glucides et protéines dans le même repas pour stabiliser ta glycémie sur la journée.",
+      "La marche quotidienne (30 min) est un levier sous-estimé pour cette zone spécifiquement.",
+    ],
+    bras: [
+      "Cette zone est souvent la dernière à bouger — sois patient, elle suit avec un peu de retard sur le reste du corps.",
+      "Renforce en parallèle (curl, triceps) pour que la peau/muscle suive la perte de gras, pas juste la nutrition seule.",
+      "Vérifie ton apport en protéines (1,6-2g/kg) — un déficit trop dur sans assez de protéines fait fondre le muscle avant le gras.",
+    ],
+    dos: [
+      "Regarde ta posture assise au travail — le stockage au dos est souvent lié à la sédentarité plus qu'à l'alimentation seule.",
+      "Ajoute du travail de dos (rowing, tirage) — le muscle qui se dessine dessous change la silhouette plus vite que la nutrition seule.",
+      "Réduis les grignotages du soir devant un écran — c'est une zone qui répond particulièrement bien à la réduction des calories \"invisibles\".",
+    ],
+  };
+  const ALIMENTAIRE_TEXTURE = {
+    dur: "Un ventre dur évoque plutôt du gonflement/tension (digestion, stress) que du gras pur — regarde le lien avec tes repas trop copieux ou trop rapides.",
+    mou: "Un ventre mou évoque plutôt du stockage graisseux classique — un déficit calorique modéré et tenu sera plus efficace qu'une restriction brutale.",
+  };
+  const ALIMENTAIRE_OBJECTIF = {
+    'perte de graisse': "Vise un déficit modéré (-300 à -500 kcal/jour) — un déficit trop violent te fera craquer avant d'avoir des résultats.",
+    'prise de muscle': "Vise un léger surplus (+200 à +300 kcal/jour) avec 1,6-2g de protéines/kg — un surplus trop large ajoute surtout du gras, pas du muscle.",
+    'recomposition': "Reste autour de ton maintien calorique avec des protéines élevées — la recomposition demande de la patience, les deux objectifs ne se poursuivent pas à pleine vitesse en même temps.",
+    'maintien': "Concentre-toi sur la qualité et la régularité des repas plus que sur les calories — à l'objectif maintien, c'est la constance qui protège tes acquis.",
+  };
+
+  const PSYCHO_BASE = {
+    stable: [
+      "Note chaque semaine ce qui a bien fonctionné — ça ancre les bons réflexes avant qu'ils ne deviennent fragiles.",
+      "Fixe-toi un seul objectif à la fois — la stabilité se maintient mieux avec un cadre simple qu'avec trop de fronts ouverts.",
+      "Prépare-toi mentalement aux imprévus (voyage, maladie, période chargée) — c'est souvent là qu'un profil stable bascule.",
+    ],
+    yoyo: [
+      "Identifie le moment exact où tu décroches habituellement (jour, situation, émotion) — c'est ce pattern qu'il faut casser, pas ta volonté.",
+      "Réduis ton cadre au strict minimum tenable les semaines difficiles plutôt que d'arrêter complètement — mieux vaut 50% maintenu que 0%.",
+      "Reviens à ton \"pourquoi\" profond chaque fois que la motivation baisse — le manque de sens use plus vite que le manque d'énergie.",
+    ],
+    decrochage: [
+      "Ne vise pas à \"tout reprendre\" d'un coup — un seul petit changement tenu cette semaine vaut mieux qu'un programme complet abandonné dans 3 jours.",
+      "Parle de ce que tu traverses à quelqu'un (coach, proche) — porter ça seul est souvent ce qui entretient le décrochage.",
+      "Reconnecte-toi à un geste simple et rapide chaque jour (5 min de marche, une invocation) — l'objectif est de recréer le mouvement, pas la performance.",
+    ],
+  };
+  const PSYCHO_HUMEUR = [
+    "Ton humeur reste stable dans la pression — un vrai point d'appui à ne pas négliger dans les moments plus durs.",
+    "Ton irritabilité récente est un signal du corps, pas juste du caractère — souvent lié au sommeil ou à la charge mentale plus qu'à la volonté.",
+    "Une humeur sombre ou apathique répétée mérite d'être prise au sérieux — pas comme une faiblesse, comme un signal à écouter et accompagner.",
+  ];
+  const PSYCHO_SITUATION = [
+    "Ta situation professionnelle stable est un vrai appui — utilise cette stabilité comme socle pour construire une routine durable.",
+    "Une situation professionnelle qui demande de la vigilance ajoute une charge mentale réelle — sois indulgent avec toi-même sur le rythme de progression.",
+    "Une situation professionnelle précaire ou en changement pèse sur l'énergie disponible pour le reste — viser un cadre minimal mais tenu est plus réaliste qu'un programme ambitieux maintenant.",
+  ];
+
+  const ENVIRONNEMENT_BASE = {
+    'sédentaire': [
+      "Ajoute du mouvement invisible dans ta journée (escaliers, marche courte) avant même de penser \"séance de sport\" — c'est la base qui manque le plus.",
+      "Bloque tes créneaux d'entraînement dans ton agenda comme un rendez-vous professionnel — sans ça, ils sautent toujours en premier.",
+      "Commence par 2 séances courtes par semaine plutôt que viser 5 d'entrée — la régularité bat l'intensité sur ce profil.",
+    ],
+    'modéré': [
+      "Structure ce que tu fais déjà avec un vrai plan plutôt que de l'improviser — tu as la base, il manque le cadre.",
+      "Ajoute une contrainte de progression (charges, répétitions notées) — sans suivi, un niveau modéré stagne facilement.",
+      "Protège tes séances des imprévus en ayant un plan B de 15 minutes pour les semaines chargées.",
+    ],
+    'actif': [
+      "Vérifie que ton activité physique sert vraiment ton objectif — être actif et progresser vers un objectif précis sont deux choses différentes.",
+      "Surveille ta récupération (sommeil, protéines) — c'est souvent le facteur limitant chez les profils déjà actifs, pas l'entraînement lui-même.",
+      "Introduis de la variété pour éviter le plateau — le corps s'adapte vite à un niveau d'activité déjà élevé.",
+    ],
+  };
+  const ENVIRONNEMENT_DOULEUR = {
+    aucune: "Pas de douleur articulaire signalée — profite-en pour construire une base solide avant que l'âge ou la charge n'en amène.",
+    genoux: "Aménage ton espace d'entraînement pour éviter les surfaces dures en impact (course sur bitume) — privilégie le vélo, la natation ou le sol amorti.",
+    dos: "Vérifie ta position de travail au quotidien (écran, chaise) — une bonne partie des douleurs de dos vient de l'environnement statique, pas juste du sport.",
+    epaules: "Adapte ton poste de travail (hauteur d'écran, souris) — les douleurs d'épaule sont souvent entretenues par des heures de posture figée.",
+    hanches: "Si tu es longtemps assis dans la journée, lève-toi et bouge toutes les heures — les hanches raidissent vite en position assise prolongée.",
+    poignets: "Revois ta prise en main sur les exercices de force (poignet neutre) et limite le temps d'écran/clavier en continu sans pause.",
+  };
+  const ENVIRONNEMENT_PRIERE = [
+    "Ta présence pendant la prière est un point d'ancrage solide — utilise ce moment déjà stable comme repère dans ta journée pour caler tes autres habitudes.",
+    "Aménage un coin de prière calme, sans écran à portée — l'esprit qui \"part ailleurs\" est souvent lié à l'environnement immédiat, pas qu'à la fatigue.",
+    "Un corps fatigué distrait particulièrement pendant la prière — soigner ton environnement de sommeil (obscurité, écrans coupés avant) aura un effet direct ici.",
+  ];
+
+  function buildAnalysisCategory(title, baseTips, secondaryTip, tertiaryTip) {
+    return { title, tips: [...baseTips, secondaryTip, tertiaryTip] };
+  }
+
+  function renderAnalysisGrid(zone, answers, bio, morpho, body) {
+    const morphoKey = getMorphotypeKey(body.imc);
+    const worstMobility = ['mobilite_orteils', 'mobilite_accroupir', 'mobilite_bras'].find((f) => morpho[f] === 'difficile');
+
+    const categories = [
+      buildAnalysisCategory(
+        'Interprétation physique',
+        PHYSIQUE_BASE[morphoKey],
+        PHYSIQUE_POSTURE[morpho.posture],
+        PHYSIQUE_MOBILITE[worstMobility || 'ok']
+      ),
+      buildAnalysisCategory(
+        'Interprétation alimentaire',
+        ALIMENTAIRE_BASE[morpho.stockage_graisse],
+        ALIMENTAIRE_TEXTURE[morpho.ventre_texture],
+        ALIMENTAIRE_OBJECTIF[bio.objectif]
+      ),
+      buildAnalysisCategory(
+        'Interprétation psychologique',
+        PSYCHO_BASE[zone.key],
+        PSYCHO_HUMEUR[answers[6]],
+        PSYCHO_SITUATION[answers[9]]
+      ),
+      buildAnalysisCategory(
+        'Interprétation environnementale',
+        ENVIRONNEMENT_BASE[bio.activite],
+        ENVIRONNEMENT_DOULEUR[morpho.douleurs_articulaires],
+        ENVIRONNEMENT_PRIERE[answers[7]]
+      ),
+    ];
+
+    document.getElementById('analysis-grid').innerHTML = categories.map((cat) => `
+      <div class="analysis-card">
+        <h3 class="analysis-card__title">${cat.title}</h3>
+        <ul class="analysis-card__list">
+          ${cat.tips.map((t) => `<li>${t}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+  }
+
+  // ── Analyse hormonale (signaux indirects, pas un dosage) ──
+  function computeHormonal(answers, bio, morpho) {
+    const energieBad = answers[0] === 2;
+    const sommeilBad = answers[4] === 2;
+    const bloating = morpho.ventre_soir === 'oui';
+    const humeurBad = answers[6] === 2;
+
+    if (bloating && humeurBad) {
+      return {
+        title: 'Un profil marqué par le cortisol',
+        text: "Ventre plus gonflé le soir, humeur qui se tend facilement : ce sont deux signaux classiques d'un cortisol (l'hormone du stress) qui reste élevé trop longtemps dans la journée. Ce n'est pas réglé par plus de sport — c'est réglé par plus de récupération : sommeil régulier, coupures d'écran le soir, respiration/cohérence cardiaque.",
+      };
+    }
+    if (energieBad && sommeilBad) {
+      return {
+        title: 'Un profil marqué par la récupération',
+        text: "Énergie basse et sommeil dégradé ensemble pointent vers un déficit de récupération plus qu'un problème hormonal isolé. Le corps ne régénère pas correctement la nuit — c'est le premier domino à réparer avant d'attendre des résultats physiques.",
+      };
+    }
+    if (bio.age && bio.age >= 40) {
+      return {
+        title: 'Une vigilance liée à l\'âge, à surveiller',
+        text: "Pas de signal fort dans tes réponses, mais à partir de 40 ans, la testostérone décline naturellement chez l'homme — ça touche l'énergie, la masse musculaire et la motivation même sans autre symptôme. Le sport de force régulier et un sommeil de qualité sont les deux leviers qui ralentissent le plus ce déclin.",
+      };
+    }
+    return {
+      title: 'Pas de signal hormonal fort',
+      text: "Tes réponses ne pointent pas vers un déséquilibre hormonal marqué. Ce qui ne veut pas dire qu'il faut relâcher le cadre — c'est justement le bon moment pour construire des habitudes qui protègent cet équilibre dans la durée.",
+    };
+  }
+
+  function renderHormonal(answers, bio, morpho) {
+    const h = computeHormonal(answers, bio, morpho);
+    document.getElementById('hormonal-title').textContent = h.title;
+    document.getElementById('hormonal-text').textContent = h.text;
+  }
+
+  // ── Exercices à éviter (vu douleurs + mobilité + posture) ──
+  function renderAvoidList(morpho) {
+    const avoid = [];
+    const DOULEUR_AVOID = {
+      genoux: 'Squats/fentes profonds à charge lourde, course sur sol dur — privilégie leg press ou vélo en attendant.',
+      dos: 'Soulevé de terre jambes tendues et mouvements en flexion lombaire chargée — privilégie le gainage neutre.',
+      epaules: 'Développé militaire et dips à amplitude complète — privilégie les mouvements à amplitude réduite, sans douleur.',
+      hanches: 'Fentes profondes et abductions chargées — privilégie la mobilité de hanche avant tout renforcement.',
+      poignets: 'Pompes/planches en appui poignet fléchi — utilise des poignées ou appuis sur avant-bras.',
+    };
+    if (DOULEUR_AVOID[morpho.douleurs_articulaires]) avoid.push(DOULEUR_AVOID[morpho.douleurs_articulaires]);
+
+    if (morpho.mobilite_accroupir === 'difficile') avoid.push('Squats profonds à charge lourde tant que la mobilité de cheville/hanche n\'est pas améliorée — risque de compensation au dos ou aux genoux.');
+    if (morpho.mobilite_bras === 'difficile') avoid.push('Développé nuque et tirage derrière la tête — risque de conflit à l\'épaule avec une mobilité limitée à ce niveau.');
+    if (morpho.mobilite_orteils === 'difficile') avoid.push('Soulevé de terre jambes tendues sans échauffement — la raideur des ischio-jambiers augmente le risque au bas du dos.');
+
+    if (morpho.posture === 'voutee') avoid.push('Développé couché en excès sans compenser par du tirage — ça accentue le déséquilibre épaules-vers-l\'avant.');
+    if (morpho.posture === 'cambree') avoid.push('Extensions lombaires et crunchs classiques en excès — ça accentue la cambrure plutôt que de la corriger.');
+
+    if (avoid.length === 0) avoid.push('Aucune contre-indication particulière détectée — reste progressif quand même sur toute charge nouvelle.');
+
+    document.getElementById('avoid-list').innerHTML = avoid.map((a) => `<li>${a}</li>`).join('');
   }
 
   function renderZonesGrid(activeZone) {

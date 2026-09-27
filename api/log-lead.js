@@ -71,6 +71,29 @@ module.exports = async (req, res) => {
     score: data.score,
     zone: data.zone,
     contexteProSignal: data.contexteProSignal,
+    // Analyse sans photo — mensurations et observations
+    tourTaille: data.tourTaille,
+    tourHanches: data.tourHanches,
+    tourCuisse: data.tourCuisse,
+    tourBras: data.tourBras,
+    tourPoitrine: data.tourPoitrine,
+    brasJambes: data.brasJambes,
+    busteJambes: data.busteJambes,
+    claviculesHanches: data.claviculesHanches,
+    cageHanches: data.cageHanches,
+    stockageGraisse: data.stockageGraisse,
+    ventreTexture: data.ventreTexture,
+    posture: data.posture,
+    douleursArticulaires: data.douleursArticulaires,
+    cellulite: data.cellulite,
+    ventreSoir: data.ventreSoir,
+    mobiliteOrteils: data.mobiliteOrteils,
+    mobiliteAccroupir: data.mobiliteAccroupir,
+    mobiliteBras: data.mobiliteBras,
+    // Synthèse de l'analyse (Sheet + email)
+    morphotype: data.morphotype,
+    typeVentre: data.typeVentre,
+    hormonalTitre: data.hormonalTitre,
   };
 
   console.log('DIAGNOSTIC_LEAD', JSON.stringify(lead));

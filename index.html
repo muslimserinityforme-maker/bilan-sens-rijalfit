@@ -91,6 +91,168 @@
       <p id="bio-error" class="form-error" role="alert" hidden></p>
     </section>
 
+    <!-- ═══ ÉCRAN — Analyse sans photo (morphologie) ═══ -->
+    <section id="screen-morpho" class="screen photo-bg photo-bg--bio" hidden>
+      <p class="eyebrow">Analyse sans photo</p>
+      <h2 class="question-title">On construit ton profil morphologique.</h2>
+      <p class="question-sub">Pas besoin de photo — quelques mesures et observations suffisent pour une analyse fiable.</p>
+
+      <h3 class="morpho-axis-title">Tes mensurations (au mètre ruban, en cm)</h3>
+      <div class="bio-fields">
+        <div class="field">
+          <label for="m-taille-t">Tour de taille *</label>
+          <input type="number" id="m-taille-t" name="tour_taille" min="40" max="200" required />
+        </div>
+        <div class="field">
+          <label for="m-hanches">Tour de hanches *</label>
+          <input type="number" id="m-hanches" name="tour_hanches" min="40" max="200" required />
+        </div>
+        <div class="field">
+          <label for="m-cuisse">Tour de cuisse *</label>
+          <input type="number" id="m-cuisse" name="tour_cuisse" min="20" max="100" required />
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-bras">Tour de bras (plié) *</label>
+          <input type="number" id="m-bras" name="tour_bras" min="10" max="70" required />
+        </div>
+        <div class="field">
+          <label for="m-poitrine">Tour de poitrine *</label>
+          <input type="number" id="m-poitrine" name="tour_poitrine" min="40" max="200" required />
+        </div>
+      </div>
+
+      <h3 class="morpho-axis-title">Devant un miroir, bras le long du corps</h3>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-bras-jambes">Tes bras comparés à tes jambes *</label>
+          <select id="m-bras-jambes" name="bras_jambes" required>
+            <option value="plus_grand">Plus grands</option>
+            <option value="identique" selected>À peu près pareil</option>
+            <option value="plus_petit">Plus petits</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-buste-jambes">Ton buste comparé à tes jambes *</label>
+          <select id="m-buste-jambes" name="buste_jambes" required>
+            <option value="plus_long">Plus long</option>
+            <option value="identique" selected>À peu près pareil</option>
+            <option value="plus_court">Plus court</option>
+          </select>
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-clavicules">Tes clavicules comparées à tes hanches *</label>
+          <select id="m-clavicules" name="clavicules_hanches" required>
+            <option value="plus_larges">Plus larges</option>
+            <option value="moyenne" selected>Moyennes</option>
+            <option value="plus_petites">Plus petites</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-cage">Ta cage thoracique comparée à tes hanches *</label>
+          <select id="m-cage" name="cage_hanches" required>
+            <option value="plus_large">Plus large</option>
+            <option value="moyenne" selected>Moyenne</option>
+            <option value="plus_courte">Plus courte</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 class="morpho-axis-title">Ton corps au quotidien</h3>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-stockage">Où stockes-tu principalement ta graisse ? *</label>
+          <select id="m-stockage" name="stockage_graisse" required>
+            <option value="ventre">Ventre</option>
+            <option value="hanches">Hanches</option>
+            <option value="cuisses">Cuisses</option>
+            <option value="bras">Bras</option>
+            <option value="dos">Dos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-ventre-texture">Ton ventre est plutôt *</label>
+          <select id="m-ventre-texture" name="ventre_texture" required>
+            <option value="dur">Dur</option>
+            <option value="mou">Mou</option>
+          </select>
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-posture">Ta posture, tu la sens *</label>
+          <select id="m-posture" name="posture" required>
+            <option value="voutee">Voûtée</option>
+            <option value="cambree">Cambrée</option>
+            <option value="droite">Droite</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-douleurs">Douleurs articulaires *</label>
+          <select id="m-douleurs" name="douleurs_articulaires" required>
+            <option value="aucune">Aucune</option>
+            <option value="genoux">Genoux</option>
+            <option value="dos">Dos / lombaires</option>
+            <option value="epaules">Épaules</option>
+            <option value="hanches">Hanches</option>
+            <option value="poignets">Poignets</option>
+          </select>
+        </div>
+      </div>
+      <div class="bio-fields bio-fields--2">
+        <div class="field">
+          <label for="m-cellulite">Zones de cellulite *</label>
+          <select id="m-cellulite" name="cellulite" required>
+            <option value="marquee">Oui, marquées</option>
+            <option value="leger">Un peu</option>
+            <option value="non">Non</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-ventre-soir">Ton ventre est plus gonflé le soir que le matin ? *</label>
+          <select id="m-ventre-soir" name="ventre_soir" required>
+            <option value="oui">Oui, nettement</option>
+            <option value="leger">Un peu</option>
+            <option value="non">Non</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 class="morpho-axis-title">Test de mobilité (auto-évalué)</h3>
+      <div class="bio-fields">
+        <div class="field">
+          <label for="m-orteils">Toucher ses orteils, jambes tendues *</label>
+          <select id="m-orteils" name="mobilite_orteils" required>
+            <option value="facile">Facile</option>
+            <option value="moyen">Moyen</option>
+            <option value="difficile">Difficile</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-accroupir">S'accroupir, talons au sol *</label>
+          <select id="m-accroupir" name="mobilite_accroupir" required>
+            <option value="facile">Facile</option>
+            <option value="moyen">Moyen</option>
+            <option value="difficile">Difficile</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="m-bras-tete">Bras au-dessus de la tête sans cambrer *</label>
+          <select id="m-bras-tete" name="mobilite_bras" required>
+            <option value="facile">Facile</option>
+            <option value="moyen">Moyen</option>
+            <option value="difficile">Difficile</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="button" id="morpho-continue-btn" class="btn btn--primary btn--large">Continuer →</button>
+      <p id="morpho-error" class="form-error" role="alert" hidden></p>
+    </section>
+
     <!-- ═══ ÉCRANS QUESTIONS (générés en JS) ═══ -->
     <section id="screen-question" class="screen photo-bg photo-bg--question" hidden>
       <p id="q-label" class="eyebrow"></p>
@@ -191,6 +353,16 @@
         <p class="fiche-caption">Une orientation à partir de ton IMC et de ton niveau d'activité — pas un diagnostic médical.</p>
       </section>
 
+      <section class="fiche-section">
+        <p class="eyebrow">Ta silhouette</p>
+        <h2 class="section-title">Ton profil morphologique, sans photo</h2>
+        <div class="fiche-card silhouette-card">
+          <div id="silhouette-svg" class="silhouette-svg"></div>
+          <div id="silhouette-traits" class="silhouette-traits"></div>
+        </div>
+        <p class="fiche-caption">Reconstituée à partir de tes mensurations et observations — une approximation visuelle, pas un scan 3D.</p>
+      </section>
+
       <section class="chart-section">
         <p class="eyebrow">La trajectoire de ta vie</p>
         <h2 class="section-title">Tes marqueurs — aujourd'hui et si rien ne change</h2>
@@ -238,6 +410,26 @@
           <div class="projection-bars" id="projection-bars"></div>
         </div>
         <p class="fiche-caption">Projection indicative sur 3 mois si tu respectes l'objectif calorique ci-dessus — pas une garantie, un cap réaliste selon ton profil.</p>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">Analyse complète</p>
+        <h2 class="section-title">Ce que tes réponses révèlent, domaine par domaine</h2>
+        <div class="analysis-grid" id="analysis-grid"></div>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">Analyse hormonale</p>
+        <h2 class="section-title" id="hormonal-title"></h2>
+        <p class="fiche-intro" id="hormonal-text"></p>
+        <p class="fiche-caption">Des signaux indirects à partir de tes réponses — pas un dosage sanguin.</p>
+      </section>
+
+      <section class="fiche-section">
+        <p class="eyebrow">À éviter pour l'instant</p>
+        <h2 class="section-title">Exercices déconseillés vu ton profil</h2>
+        <ul class="avoid-list" id="avoid-list"></ul>
+        <p class="fiche-caption">À réintroduire progressivement une fois la mobilité et les douleurs améliorées.</p>
       </section>
 
       <section class="message-section">

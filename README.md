@@ -70,7 +70,7 @@ index.html                 → les 5 écrans (intro / bio / question / porte / r
 style.css                   → design Rijal Fit (kaki/or/beige/noir, Rajdhani/Inter)
 script.js                   → questions, scoring, zones, calculs, jauges SVG, graphique, lead
 api/log-lead.js             → fonction serverless : enregistre le lead (pas d'IA, pas de PDF)
-google-apps-script/Code.gs  → script à coller dans une Google Sheet pour recevoir les leads
+google-apps-script/Code.gs  → script à coller dans une Google Sheet : reçoit les leads + envoie le Bilan Sens par email (MailApp, pas de service tiers)
 images/matt.jpg              → photo du coach, réutilisée dans le Bilan de Sens
 ```
 
@@ -88,6 +88,15 @@ Plus besoin de clé API Anthropic. Il ne reste que :
    tant que **Moi**, Qui a accès : **Tout le monde**.
 5. Autorise l'accès (c'est ton propre script).
 6. Copie l'URL donnée à la fin (`https://script.google.com/macros/s/.../exec`).
+
+Ce même script envoie aussi le Bilan Sens par email à chaque prospect, via
+`MailApp.sendEmail()` — depuis le compte Gmail qui a déployé le script, sans
+service tiers ni clé API. Limite à connaître : un compte Gmail gratuit a un
+quota d'environ 100 emails/jour (bien au-delà du volume actuel du site).
+
+**Si tu redéploies ce script (Code.gs modifié) :** Déployer → Gérer les
+déploiements → icône crayon sur le déploiement existant → Nouvelle version →
+Déployer. Ça garde la même URL, pas besoin de retoucher la variable Vercel.
 
 ### 2. Déployer sur Vercel
 
