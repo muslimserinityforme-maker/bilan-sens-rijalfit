@@ -100,6 +100,10 @@ module.exports = async (req, res) => {
     morphotype: data.morphotype,
     typeVentre: data.typeVentre,
     hormonalTitre: data.hormonalTitre,
+    // Profil psychologique — usage interne coach uniquement
+    profilBase: data.profilBase,
+    profilPhase: data.profilPhase,
+    orientationVente: data.orientationVente,
   };
 
   console.log('DIAGNOSTIC_LEAD', JSON.stringify(lead));

@@ -17,6 +17,7 @@ var COLUMNS = [
   'Stockage graisse', 'Texture ventre', 'Posture', 'Douleurs articulaires', 'Cellulite', 'Ventre soir',
   'Mobilité orteils', 'Mobilité accroupir', 'Mobilité bras',
   'Morphotype', 'Type de ventre', 'Analyse hormonale',
+  'Profil psy (base)', 'Profil psy (phase)', 'Orientation vente',
 ];
 
 var MORPHO_COLUMNS = [
@@ -165,6 +166,9 @@ function appendToSheet(data) {
     data.morphotype || '',
     data.typeVentre || '',
     data.hormonalTitre || '',
+    data.profilBase || '',
+    data.profilPhase || '',
+    data.orientationVente || '',
   ]);
 }
 
