@@ -475,7 +475,6 @@
     const body = computeBodyComposition(bio.age, bio.taille, bio.poids, bio.activite, bio.objectif);
     renderFicheImc(bio, body);
     renderMorphotype(body, bio);
-    renderSilhouette(morpho);
     renderBodyFat(body);
     renderFicheComposition(body);
     renderProjection(bio, body);
@@ -608,96 +607,6 @@
     document.getElementById('morphotype-img').alt = m.name;
     document.getElementById('morphotype-name').textContent = m.name;
     document.getElementById('morphotype-text').textContent = `${m.text} ${m.meaning}`;
-  }
-
-  // ── Silhouette (vue de face, générée à partir de "Analyse sans photo") ──
-  // Chaque trait (épaules, cage thoracique, ventre, bassin) déplace un point
-  // de contrôle du contour — pas une photo, une approximation visuelle honnête.
-  function renderSilhouette(morpho) {
-    const shoulderHW = { plus_larges: 48, moyenne: 41, plus_petites: 35 }[morpho.clavicules_hanches] ?? 41;
-    const chestHW = { plus_large: 42, moyenne: 36, plus_courte: 31 }[morpho.cage_hanches] ?? 36;
-    const ventreMou = morpho.ventre_texture === 'mou';
-    const ventreCible = morpho.stockage_graisse === 'ventre';
-    const waistHW = 24 + (ventreCible ? (ventreMou ? 16 : 10) : (ventreMou ? 8 : 3));
-    const hipHW = { large: 36, moyen: 31, etroit: 27 }[morpho.bassin] ?? 31;
-    const shoulderDrop = morpho.posture === 'voutee' ? 8 : 0;
-    const headTilt = morpho.posture === 'voutee' ? 5 : 0;
-
-    const cx = 110;
-    const shoulderY = 56 + shoulderDrop;
-    const chestY = 98 + shoulderDrop * 0.4;
-    const waistY = 150;
-    const hipY = 182;
-    const crotchY = 206;
-    const gap = 7;
-    const thighHW = hipHW * 0.5;
-    const kneeY = 286, kneeHW = thighHW * 0.68;
-    const calfY = 328, calfHW = kneeHW * 0.82;
-    const ankleY = 366, ankleHW = calfHW * 0.7;
-    const footY = 382, footHW = ankleHW * 1.5;
-    const armHW = 11 + (shoulderHW - 41) * 0.15;
-    const armTopY = shoulderY + 8, armBottomY = waistY + 25;
-
-    const torso = `
-      M ${cx - shoulderHW},${shoulderY}
-      Q ${cx - shoulderHW - 6},${shoulderY - 14} ${cx - shoulderHW * 0.4},${shoulderY - 20}
-      Q ${cx},${shoulderY - 24} ${cx + shoulderHW * 0.4},${shoulderY - 20}
-      Q ${cx + shoulderHW + 6},${shoulderY - 14} ${cx + shoulderHW},${shoulderY}
-      C ${cx + shoulderHW + 2},${shoulderY + 20} ${cx + chestHW},${chestY - 18} ${cx + chestHW},${chestY}
-      C ${cx + chestHW},${chestY + 20} ${cx + waistHW},${waistY - 16} ${cx + waistHW},${waistY}
-      C ${cx + waistHW},${waistY + 16} ${cx + hipHW},${hipY - 12} ${cx + hipHW},${hipY}
-      L ${cx + gap},${crotchY}
-      L ${cx - gap},${crotchY}
-      L ${cx - hipHW},${hipY}
-      C ${cx - hipHW},${hipY - 12} ${cx - waistHW},${waistY + 16} ${cx - waistHW},${waistY}
-      C ${cx - waistHW},${waistY - 16} ${cx - chestHW},${chestY + 20} ${cx - chestHW},${chestY}
-      C ${cx - chestHW},${chestY - 18} ${cx - shoulderHW - 2},${shoulderY + 20} ${cx - shoulderHW},${shoulderY}
-      Z`;
-
-    const leg = (s) => `
-      M ${cx + s * hipHW},${hipY}
-      C ${cx + s * hipHW},${hipY + 14} ${cx + s * thighHW * 1.05},${crotchY + 6} ${cx + s * thighHW},${crotchY + 20}
-      C ${cx + s * thighHW * 0.95},${kneeY - 30} ${cx + s * kneeHW * 1.2},${kneeY - 10} ${cx + s * kneeHW},${kneeY}
-      C ${cx + s * kneeHW * 0.85},${kneeY + 10} ${cx + s * calfHW * 1.1},${calfY - 20} ${cx + s * calfHW},${calfY}
-      C ${cx + s * calfHW * 0.9},${calfY + 18} ${cx + s * ankleHW * 1.1},${ankleY - 8} ${cx + s * ankleHW},${ankleY}
-      L ${cx + s * footHW},${footY}
-      L ${cx + s * gap * 0.7},${footY - 2}
-      C ${cx + s * gap * 0.5},${ankleY} ${cx + s * gap * 0.8},${kneeY + 20} ${cx + s * gap},${kneeY - 10}
-      L ${cx + s * gap},${crotchY}
-      Z`;
-
-    const arm = (s) => {
-      const armCenterX = cx + s * (shoulderHW + armHW - 3);
-      return `<rect x="${armCenterX - armHW}" y="${armTopY}" width="${armHW * 2}" height="${armBottomY - armTopY}" rx="${armHW}" fill="var(--kaki)" opacity=".85" />`;
-    };
-
-    const svg = `
-      <svg viewBox="0 0 220 400" class="silhouette-illustration" aria-hidden="true">
-        <path d="${torso}" fill="var(--kaki)" opacity=".85" />
-        <path d="${leg(-1)}" fill="var(--kaki)" opacity=".85" />
-        <path d="${leg(1)}" fill="var(--kaki)" opacity=".85" />
-        ${arm(-1)}
-        ${arm(1)}
-        <circle cx="${cx + headTilt}" cy="26" r="17" fill="var(--kaki)" opacity=".85" />
-      </svg>`;
-    document.getElementById('silhouette-svg').innerHTML = svg;
-
-    const SEG_LABEL = { plus_grand: 'plus grands que la moyenne', identique: 'proportionnés', plus_petit: 'plus courts que la moyenne' };
-    const BUSTE_LABEL = { plus_long: 'un buste plus long que les jambes', identique: 'un buste bien proportionné', plus_court: 'un buste plus court que les jambes' };
-    const CAGE_LABEL = { plus_large: 'une cage thoracique ample', moyenne: 'une cage thoracique moyenne', plus_courte: 'une cage thoracique plus étroite' };
-    const EPAULES_LABEL = { plus_larges: 'des épaules larges', moyenne: 'des épaules moyennes', plus_petites: 'des épaules plus étroites' };
-    const POSTURE_LABEL = { voutee: 'une posture voûtée, épaules qui tombent vers l\'avant', cambree: 'une posture cambrée, le bas du dos creusé', droite: 'une posture droite, bien alignée' };
-
-    const traits = [
-      ['Cage thoracique', CAGE_LABEL[morpho.cage_hanches]],
-      ['Épaules', EPAULES_LABEL[morpho.clavicules_hanches]],
-      ['Bras', SEG_LABEL[morpho.bras_jambes]],
-      ['Buste / jambes', BUSTE_LABEL[morpho.buste_jambes]],
-      ['Posture', POSTURE_LABEL[morpho.posture]],
-    ];
-    document.getElementById('silhouette-traits').innerHTML = traits.map(([label, val]) =>
-      `<div class="silhouette-trait"><span class="silhouette-trait__label">${label}</span><span class="silhouette-trait__val">${val}</span></div>`
-    ).join('');
   }
 
   const BODYFAT_EXPLAIN = {

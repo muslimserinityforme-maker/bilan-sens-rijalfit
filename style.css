@@ -647,18 +647,6 @@ input:focus { outline: none; border-color: var(--or); }
 
 .morphotype-name { font-family: 'Rajdhani', sans-serif; font-weight: 700; color: var(--kaki); font-size: 1.15rem; margin-bottom: .3rem; }
 
-/* ── Silhouette ── */
-.silhouette-card { display: flex; align-items: center; gap: 24px; }
-
-.silhouette-svg { flex-shrink: 0; width: 110px; }
-.silhouette-illustration { width: 100%; height: auto; display: block; }
-
-.silhouette-traits { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-
-.silhouette-trait { display: flex; justify-content: space-between; gap: 12px; font-size: .88rem; border-bottom: 1px solid #eee2d0; padding-bottom: 6px; }
-.silhouette-trait__label { color: var(--gris); flex-shrink: 0; }
-.silhouette-trait__val { color: var(--noir); font-weight: 500; text-align: right; }
-
 /* ── Projection 3 mois ── */
 .projection-bars { display: flex; flex-direction: column; gap: 18px; margin-top: 18px; }
 
@@ -841,7 +829,4 @@ input:focus { outline: none; border-color: var(--or); }
   .gauge { flex-direction: column; }
   .bellytype-card { flex-direction: column; text-align: center; }
   .morphotype-card { flex-direction: column; text-align: center; }
-  .silhouette-card { flex-direction: column; }
-  .silhouette-trait { flex-direction: column; gap: 2px; }
-  .silhouette-trait__val { text-align: left; }
 }
