@@ -235,13 +235,33 @@
   ];
   const MORPHO_NUMERIC = ['tour_taille', 'tour_hanches', 'tour_cuisse', 'tour_bras', 'tour_poitrine'];
   const morphoError = document.getElementById('morpho-error');
+  let measuresSkipped = false;
+  const skipMeasuresBtn = document.getElementById('skip-measures-btn');
+  skipMeasuresBtn.addEventListener('click', () => {
+    measuresSkipped = !measuresSkipped;
+    MORPHO_NUMERIC.forEach((field) => {
+      const el = document.querySelector(`[name="${field}"]`);
+      el.disabled = measuresSkipped;
+      if (measuresSkipped) el.value = '';
+    });
+    skipMeasuresBtn.textContent = measuresSkipped ? 'Étape passée ✓ (annuler)' : 'Passer cette étape';
+    if (measuresSkipped) {
+      document.getElementById('morpho-miroir-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
   document.getElementById('morpho-continue-btn').addEventListener('click', () => {
     const values = {};
     let missing = false;
     MORPHO_FIELDS.forEach((field) => {
       const el = document.querySelector(`[name="${field}"]`);
+      const isMeasure = MORPHO_NUMERIC.includes(field);
+      if (isMeasure && measuresSkipped) {
+        values[field] = null;
+        return;
+      }
       if (!el.value) missing = true;
-      values[field] = MORPHO_NUMERIC.includes(field) ? Number(el.value) : el.value;
+      values[field] = isMeasure ? Number(el.value) : el.value;
     });
 
     if (missing) {
