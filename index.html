@@ -49,11 +49,11 @@
       </div>
     </section>
 
-    <!-- ═══ ÉCRAN — Départ : prénom, email, âge ═══ -->
+    <!-- ═══ ÉCRAN — Après les questions : prénom, email, âge ═══ -->
     <section id="screen-depart" class="screen photo-bg photo-bg--bio" hidden>
-      <p class="eyebrow">Avant de commencer</p>
+      <p class="eyebrow">Ton bilan est prêt</p>
       <h2 class="question-title">Comment on t'appelle ?</h2>
-      <p class="question-sub">Pour t'envoyer ton bilan par email. Rien d'autre à remplir.</p>
+      <p class="question-sub">Dis-nous qui tu es et où t'envoyer ton bilan complet. Tu le vois tout de suite à l'écran.</p>
 
       <form id="depart-form" novalidate>
         <div class="field">
@@ -76,9 +76,12 @@
             J'accepte de recevoir mon bilan par email et des conseils de Rijal Fit. Je peux me désinscrire à tout moment. *
           </label>
         </div>
-        <button type="submit" class="btn btn--primary btn--large">Commencer le bilan →</button>
+        <button type="submit" class="btn btn--primary btn--large">Voir mon bilan →</button>
         <p id="depart-error" class="form-error" role="alert" hidden></p>
       </form>
+      <div class="nav-row">
+        <button type="button" id="depart-back" class="nav-link">← Revenir à la dernière question</button>
+      </div>
     </section>
 
     <!-- ═══ ÉCRANS QUESTIONS (générés en JS) ═══ -->

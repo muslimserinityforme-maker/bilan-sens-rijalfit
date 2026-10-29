@@ -9,10 +9,10 @@ email.
 ## Parcours
 
 1. **Intro** — le hadith « Ton corps a un droit sur toi. », une phrase claire.
-2. **Départ** — prénom ou surnom, email, âge (facultatif), case de consentement.
-   La personne est enregistrée **dès cet écran** (statut « Démarré »), même si
-   elle abandonne ensuite.
-3. **9 questions** — une par écran, 3 réponses (A/B/C = 0/1/2 points), avec photos.
+2. **9 questions** — une par écran, 3 réponses (A/B/C = 0/1/2 points), avec photos.
+3. **Prénom, email, âge** (facultatif) et case de consentement, juste avant le
+   résultat : la personne a fait le bilan, elle donne naturellement son email
+   pour le voir.
 4. **Résultat** — le profil (3 zones), les **4 barres en pourcentage** avec un
    commentaire par santé, ton message personnel (vidéo par profil si tu en as
    une, sinon texte), puis un seul appel à l'action : l'appel découverte offert.
@@ -59,10 +59,10 @@ automatiquement) :
 `Date · Prénom · Email · Âge · Statut · Score · Zone · Physique % · Mentale % ·
 Sociale % · Spirituelle % · Santé à regarder en premier · Problème n°1 · Date résultat`
 
-- **Statut « Démarré »** : la personne a donné son email mais n'a pas fini
-  (c'est ta mesure d'abandon).
-- **Statut « Terminé »** : la ligne est complétée avec ses résultats, et son
-  email de résultat part automatiquement (compte Gmail qui a déployé le script).
+- Une ligne par personne qui a terminé le bilan (statut « Terminé »), et son
+  email de résultat part automatiquement (compte Gmail qui a déployé le
+  script). Les personnes qui s'arrêtent avant l'écran email ne sont pas
+  enregistrées.
 - L'onglet « Bilan Morpho » reçoit l'outil autonome ; le premier onglet garde
   l'historique de l'ancien quiz.
 
@@ -91,4 +91,4 @@ Connecté à GitHub (`muslimserinityforme-maker/bilan-sens-rijalfit`, branche
 
 Ouvre `ton-bilan-sante.vercel.app` et fais le bilan trois fois (tout A,
 tout C, un mélange) : tu dois voir les 3 zones, des barres de couleurs
-différentes, et une ligne « Démarré » puis « Terminé » dans l'onglet « Bilans ».
+différentes, et une ligne « Terminé » dans l'onglet « Bilans ».

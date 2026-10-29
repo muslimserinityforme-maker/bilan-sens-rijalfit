@@ -224,28 +224,26 @@
   }
 
   // ── Enregistrement du lead (jamais bloquant pour la personne) ──
-  async function sendLead(payload, waitMs) {
-    const request = fetch('/api/log-lead', {
+  function sendLead(payload) {
+    fetch('/api/log-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
       keepalive: true,
     }).catch((err) => console.error('log-lead a échoué', err));
-    if (waitMs) {
-      await Promise.race([request, new Promise((resolve) => setTimeout(resolve, waitMs))]);
-    }
   }
 
-  // ── Intro → départ ──
+  // ── Intro → questions ──
   document.getElementById('start-btn').addEventListener('click', () => {
-    showScreen('depart');
+    currentQuestion = 0;
+    renderQuestion(0);
   });
 
-  // ── Départ : prénom, email, âge ──
+  // ── Après la dernière question : prénom, email, âge, puis le bilan ──
   const departForm = document.getElementById('depart-form');
   const departError = document.getElementById('depart-error');
 
-  departForm.addEventListener('submit', async (event) => {
+  departForm.addEventListener('submit', (event) => {
     event.preventDefault();
     departError.hidden = true;
 
@@ -259,21 +257,12 @@
     const ageValue = document.getElementById('d-age').value;
     lead.age = ageValue ? Number(ageValue) : null;
 
-    const submitBtn = departForm.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-    // L'email est enregistré dès maintenant : même si la personne s'arrête en
-    // route, tu la gardes dans ta base (statut « Démarré » dans la Sheet).
-    await sendLead({
-      event: 'start',
-      date: new Date().toISOString(),
-      prenom: lead.prenom,
-      email: lead.email,
-      age: lead.age,
-    }, 1500);
-    submitBtn.disabled = false;
+    finish();
+  });
 
-    currentQuestion = 0;
-    renderQuestion(0);
+  document.getElementById('depart-back').addEventListener('click', () => {
+    currentQuestion = QUESTIONS.length - 1;
+    renderQuestion(currentQuestion);
   });
 
   // ── Questions ──
@@ -317,7 +306,7 @@
     } else {
       currentQuestion = QUESTIONS.length;
       updateTopbar();
-      finish();
+      showScreen('depart');
     }
   }
 
@@ -326,7 +315,7 @@
       currentQuestion -= 1;
       renderQuestion(currentQuestion);
     } else {
-      showScreen('depart');
+      showScreen('intro');
     }
   });
 
