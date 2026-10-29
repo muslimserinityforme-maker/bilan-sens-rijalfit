@@ -89,6 +89,6 @@ Connecté à GitHub (`muslimserinityforme-maker/bilan-sens-rijalfit`, branche
 
 ## Test
 
-Ouvre `bilan-sens-rijalfit.vercel.app` et fais le bilan trois fois (tout A,
+Ouvre `ton-bilan-sante.vercel.app` et fais le bilan trois fois (tout A,
 tout C, un mélange) : tu dois voir les 3 zones, des barres de couleurs
 différentes, et une ligne « Démarré » puis « Terminé » dans l'onglet « Bilans ».
