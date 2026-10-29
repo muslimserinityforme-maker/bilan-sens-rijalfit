@@ -86,7 +86,7 @@ module.exports = async (req, res) => {
       tagline: text(data.tagline, 300),
       zoneColor: /^#[0-9a-fA-F]{6}$/.test(data.zoneColor) ? data.zoneColor : '#4A5240',
       message: text(data.message, 1200),
-      problemText: text(data.problemText, 800),
+      problemText: text(data.problemText, 2000),
       videoUrl: /^https:\/\//.test(data.videoUrl) ? text(data.videoUrl, 300) : '',
       sante: (Array.isArray(data.sante) ? data.sante : []).slice(0, 4).map((s) => ({
         label: text(s && s.label, 40),

@@ -21,7 +21,6 @@
         "Variable. Certains jours bons, d'autres lourds.",
         "Vidé. Je traîne dès le matin, même après une nuit complète.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ton énergie. Tu te lèves déjà vidé, et un corps sans énergie a du mal à se lever pour Fajr avec présence. Ce n'est pas de la paresse : c'est un signal que ton corps t'envoie, et ça se retravaille.",
     },
     {
       sante: 'sociale', short: 'Vie sociale',
@@ -34,7 +33,6 @@
         "Je décline plus souvent qu'avant, par fatigue.",
         "Je m'isole, je n'ai plus l'énergie d'y aller.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est l'énergie que tu as pour les autres. Ce n'est pas de la distance : c'est la fatigue qui te coupe de ceux qui comptent. Ça se retravaille, et c'est souvent le premier signe qui revient quand le corps va mieux.",
     },
     {
       sante: 'physique', short: 'Ventre',
@@ -47,7 +45,6 @@
         "Il s'installe doucement, malgré mes efforts.",
         "Visible et tenace, rien ne semble le déloger.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ce poids qui s'installe malgré toi. Ton corps est une amānah : il te parle à travers ce ventre qui ne bouge pas. Il demande surtout qu'on l'écoute, et ça se retravaille.",
     },
     {
       sante: 'mentale', short: 'Motivation',
@@ -60,7 +57,6 @@
         "Plus tiède qu'avant. Je me force davantage.",
         "Éteinte. Je n'ai plus le feu d'avant.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ta motivation qui s'essouffle. Le feu qui te faisait avancer, dans ton sport comme dans ta pratique, est plus faible. Ce n'est pas irréversible : un feu se rallume, souvent avec un cadre simple et quelqu'un qui te suit.",
     },
     {
       sante: 'physique', short: 'Sommeil',
@@ -73,7 +69,6 @@
         "Correct mais haché, je ne me sens pas frais.",
         "Mauvais. Réveils, ruminations, fatigue chronique.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ton sommeil. Sans récupération, rien d'autre ne tient, ni ton corps, ni ta concentration dans la prière. C'est souvent le premier domino à réparer avant tout le reste.",
     },
     {
       sante: 'sociale', short: 'Famille',
@@ -86,7 +81,6 @@
         "Moins disponible qu'avant, je le sens.",
         "Absent même quand je suis là.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est l'énergie que tu as pour les tiens. Quand le corps est fatigué, il en reste moins pour ta famille. Prendre soin de toi, c'est aussi prendre soin d'eux.",
     },
     {
       sante: 'mentale', short: 'Humeur',
@@ -99,7 +93,6 @@
         "Plus irritable, plus à fleur de peau.",
         "Cassant, sombre ou sans énergie souvent.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ton humeur. Quand le corps est épuisé, la patience s'use, et ça se ressent à la maison comme au travail. C'est un ressenti, et ça se retravaille.",
     },
     {
       sante: 'spirituelle', short: 'Prière',
@@ -112,7 +105,6 @@
         "L'esprit ailleurs, difficile de me concentrer.",
         "Fatigué, mon corps me distrait de ce que je fais.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ta présence dans la prière. Ton corps fatigué te distrait au moment le plus important de ta journée. C'est exactement pour ça que Rijal Fit existe : relier ton corps à ton adoration, pas les séparer.",
     },
     {
       sante: 'spirituelle', short: 'Corps et adorations',
@@ -125,7 +117,6 @@
         "Quelques raideurs, douleurs ou coups de fatigue me gênent.",
         "Je raccourcis ou j'évite certaines positions à cause de mon corps.",
       ],
-      problemText: "Ce qui pèse le plus ici, c'est ton corps dans l'adoration. Raideurs, douleurs ou fatigue te gênent là où tu voudrais être pleinement présent. Ça ne dit rien de ta foi : c'est un corps qui a besoin d'aide, et ça se retravaille.",
     },
   ];
 
@@ -165,6 +156,36 @@
       },
     },
   ];
+
+  // Le message sur la santé « à regarder en premier » : pourquoi (les autres
+  // priorités ont pris la place), ce que ça change dans sa vie, ce qu'elle
+  // risque si ça attend, puis un premier pas très petit. Quatre paragraphes.
+  const PRIORITY_MESSAGES = {
+    physique: [
+      "Pourquoi ton corps passe-t-il en dernier ? Parce que tout le reste passe avant lui : le travail, la famille, les obligations. Tu t'occupes de tout le monde, et ton corps attend son tour.",
+      "Dans ta vie, ça se voit : des matins lourds, un ventre qui s'installe, un sommeil qui ne répare plus. Moins d'énergie pour les tiens, pour ton travail, pour ta prière.",
+      "Tu te dis peut-être que ça peut attendre. Mais c'est un cercle : moins d'énergie, moins de mouvement, encore moins d'énergie. Si rien ne change, tu risques de perdre l'envie de bouger, puis le plaisir de profiter des tiens. Un corps qu'on met en dernier finit par réclamer son tour.",
+      "La bonne nouvelle : ça se retravaille, et le premier pas est souvent plus simple qu'on ne le croit. Il commence par en parler 30 minutes, sans engagement.",
+    ],
+    mentale: [
+      "Pourquoi ta motivation et ton humeur s'usent-elles ? Parce que tu portes beaucoup, longtemps, sans te garder de la place. Les priorités des autres passent avant la tienne.",
+      "Dans ta vie, ça se voit : moins de patience à la maison, une motivation qui s'éteint pour le sport comme pour le reste, des journées qu'on subit au lieu de les choisir.",
+      "Tu te dis peut-être que ça peut attendre. Mais la fatigue mentale ne s'arrête pas toute seule. Si rien ne change, tu risques de t'éteindre doucement : perdre ce qui te donnait envie d'avancer et laisser la fatigue décider à ta place. On finit par ne plus se reconnaître.",
+      "La bonne nouvelle : ça se retravaille, et c'est souvent le corps qui rallume le reste. Le premier pas : en parler 30 minutes, sans engagement.",
+    ],
+    sociale: [
+      "Pourquoi ta santé sociale passe-t-elle après le reste ? Ce n'est pas un manque d'amour pour les tiens. D'autres priorités ont pris la place : le travail, les responsabilités, et surtout la fatigue qui te laisse sans énergie le soir.",
+      "Dans ta vie, ça se voit : moins de présence à la maison, des appels et des sorties que tu repousses, des frères que tu vois de moins en moins. Tu es là, mais pas vraiment là.",
+      "Tu te dis peut-être que ça peut attendre. C'est justement ce qui laisse les liens se défaire sans bruit. Si rien ne change, tu risques de perdre la complicité avec ta famille, des amitiés qui s'éloignent, la place que tu avais dans leur quotidien. Ces liens ne se rattrapent pas toujours après coup.",
+      "La bonne nouvelle : ça se retravaille, et c'est souvent le premier signe qui revient quand le corps retrouve de l'énergie. Le premier pas est petit : en parler 30 minutes, sans engagement.",
+    ],
+    spirituelle: [
+      "Pourquoi ton corps te gêne-t-il dans tes adorations ? Parce qu'il est resté longtemps le dernier de tes priorités. Aujourd'hui, il ne suit plus quand tu lui demandes l'essentiel.",
+      "Dans ta vie, ça se voit : une prière où l'esprit part ailleurs, des positions que tu écourtes, une présence qui s'effrite au moment le plus important de ta journée.",
+      "Tu te dis peut-être que ça peut attendre. Mais ce qui s'érode en silence se remarque tard. Si rien ne change, tu risques de voir tes adorations se raccourcir, la concentration s'éloigner, et une distance que tu n'avais pas choisie. Ça ne dit rien de ta foi : c'est ton corps qui peut finir par t'en éloigner.",
+      "La bonne nouvelle : ça se retravaille. Un corps qui retrouve de l'énergie redevient un allié de ton adoration. Le premier pas : en parler 30 minutes, sans engagement.",
+    ],
+  };
 
   const ZONES = {
     stable: {
@@ -379,8 +400,11 @@
     const priority = lowest.tier === 'haut' ? null : lowest;
 
     const topIndex = getProblemIndex(priority);
-    const problemText = topIndex >= 0
-      ? `Ce qui ressort de tes réponses : ta ${priority.label.toLowerCase()} (${priority.pct} %) est celle qui demande le plus d'attention. ${QUESTIONS[topIndex].problemText}`
+    const problemText = priority
+      ? [
+          `Ce qui ressort de tes réponses : ta ${priority.label.toLowerCase()} (${priority.pct} %) est celle qui demande le plus d'attention.`,
+          ...PRIORITY_MESSAGES[priority.key],
+        ].join('\n\n')
       : '';
 
     sendLead({
@@ -454,7 +478,14 @@
     }
 
     document.getElementById('message-zone-text').textContent = zone.message;
-    document.getElementById('message-problem-text').textContent = problemText;
+    const problemBox = document.getElementById('message-problem-text');
+    problemBox.innerHTML = '';
+    problemText.split('\n\n').filter(Boolean).forEach((paragraph) => {
+      const p = document.createElement('p');
+      p.className = 'message-card__text';
+      p.textContent = paragraph;
+      problemBox.appendChild(p);
+    });
 
     const cta = document.getElementById('cta-calendly');
     cta.href = CALENDLY_URL;
