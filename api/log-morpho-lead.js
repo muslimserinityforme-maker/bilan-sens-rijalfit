@@ -1,5 +1,5 @@
 // Reçoit un lead du "Bilan Morpho-Anatomique" (outil autonome, 11 menus
-// déroulants) et le transmet au même webhook Apps Script que le Bilan Sens
+// déroulants) et le transmet au même webhook Apps Script que Ton Bilan Santé
 // principal (même Google Sheet, un onglet dédié + un email dédié).
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
