@@ -190,7 +190,7 @@
   const ZONES = {
     stable: {
       key: 'stable', min: 0, max: 6,
-      color: '#4A5240', bg: '#eef0ea',
+      color: '#2c5642', bg: '#e6efe9',
       name: 'Réalignement stable',
       tagline: "Ta base tient. C'est une vraie force. L'enjeu maintenant : la garder, avec un cadre simple.",
       message: "Ta base tient, c'est une vraie force : ne la sous-estime pas. « Stable » ne veut pas dire « à l'abri ». Ton corps est une amānah, il demande d'être entretenu, pas d'être parfait. Si tu veux verrouiller ça durablement, avec un cadre qui tient dans ta vraie vie, je suis là.",
@@ -466,6 +466,21 @@
         <p class="sante-card__text">${s.texts[s.tier]}</p>
       </div>
     `).join('');
+
+    // Les pourcentages montent de 0 à leur valeur en même temps que les barres.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.sante-card__pct').forEach((el, i) => {
+        const target = santes[i].pct;
+        const start = performance.now() + 300;
+        el.textContent = '0 %';
+        const tick = (now) => {
+          const t = Math.min(1, Math.max(0, (now - start) / 1000));
+          el.textContent = `${Math.round(target * (1 - Math.pow(1 - t, 3)))} %`;
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }
 
     const embed = toEmbedUrl(VIDEOS[zone.key]);
     const videoBox = document.getElementById('result-video');

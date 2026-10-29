@@ -132,11 +132,11 @@ function sendBilanSanteEmail(data) {
 
   var prenom = data.prenom || '';
   var sante = data.sante || [];
-  var tierColors = { haut: '#4A5240', moyen: '#C9A84C', bas: '#a13a3a' };
+  var tierColors = { haut: '#2c5642', moyen: '#C9A84C', bas: '#a13a3a' };
   var question = 'Tu as le sentiment d\'être en bonne santé ? Mais est-ce que tu l\'es vraiment ?';
   var honesty = 'Ce bilan repose sur tes réponses, donc sur ton ressenti. Il t\'aide à regarder ' +
     'plus précisément. Pour être sûr de ton état de santé, seul un bilan médical le dit.';
-  var zoneColor = /^#[0-9a-fA-F]{6}$/.test(data.zoneColor || '') ? data.zoneColor : '#4A5240';
+  var zoneColor = /^#[0-9a-fA-F]{6}$/.test(data.zoneColor || '') ? data.zoneColor : '#2c5642';
 
   // ── Version texte ──
   var text = (prenom ? 'Salam ' + prenom + ',\n\n' : 'Salam,\n\n') +
@@ -163,7 +163,7 @@ function sendBilanSanteEmail(data) {
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-left:5px solid ' + color + ';margin:0 0 14px 0;border-radius:6px;">' +
       '<tr><td style="padding:16px 18px;">' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>' +
-      '<td style="font-size:18px;font-weight:bold;color:#363d2f;">' + escapeHtml(s.label) + '</td>' +
+      '<td style="font-size:18px;font-weight:bold;color:#142a20;">' + escapeHtml(s.label) + '</td>' +
       '<td align="right" style="font-size:22px;font-weight:bold;color:#1A1A1A;">' + pct + ' %</td>' +
       '</tr></table>' +
       (s.question ? '<div style="font-size:13px;font-style:italic;color:#6b7280;margin-top:2px;">' + escapeHtml(s.question) + '</div>' : '') +
@@ -177,7 +177,7 @@ function sendBilanSanteEmail(data) {
   }).join('');
 
   var html = '' +
-    '<div style="background:#F5F0E8;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#1A1A1A;">' +
+    '<div style="background:#f7f1e3;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#1A1A1A;">' +
     '<div style="max-width:560px;margin:0 auto;">' +
     '<div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;">Rijal Fit · Ton Bilan Santé</div>' +
     '<p style="font-size:16px;margin:14px 0 6px 0;">' + (prenom ? 'Salam ' + escapeHtml(prenom) + ',' : 'Salam,') + '</p>' +
@@ -187,19 +187,19 @@ function sendBilanSanteEmail(data) {
     '<div style="font-size:15px;line-height:1.5;color:#ffffff;">' + escapeHtml(data.tagline || '') + '</div>' +
     '</div>' +
     '<div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;font-weight:bold;">Tes 4 santés</div>' +
-    '<h2 style="font-size:19px;line-height:1.35;color:#363d2f;margin:6px 0 16px 0;font-style:italic;">' + escapeHtml(question) + '</h2>' +
+    '<h2 style="font-size:19px;line-height:1.35;color:#142a20;margin:6px 0 16px 0;font-style:italic;">' + escapeHtml(question) + '</h2>' +
     cards +
     '<p style="font-size:13px;font-style:italic;color:#6b7280;line-height:1.6;margin:8px 0 26px 0;">' + escapeHtml(honesty) + '</p>' +
     '<div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;font-weight:bold;margin-bottom:10px;">Ton message personnel</div>' +
-    (data.videoUrl ? '<p style="margin:0 0 12px 0;"><a href="' + escapeHtml(data.videoUrl) + '" style="color:#363d2f;font-weight:bold;">▶ Regarde ma vidéo pour toi</a></p>' : '') +
+    (data.videoUrl ? '<p style="margin:0 0 12px 0;"><a href="' + escapeHtml(data.videoUrl) + '" style="color:#142a20;font-weight:bold;">▶ Regarde ma vidéo pour toi</a></p>' : '') +
     '<div style="background:#ffffff;border-radius:8px;padding:20px;">' +
     '<p style="font-size:15px;line-height:1.7;font-style:italic;color:#2a2a2a;margin:0 0 12px 0;">' + escapeHtml(data.message || '') + '</p>' +
     (data.problemText ? String(data.problemText).split('\n\n').map(function (t) {
       return '<p style="font-size:15px;line-height:1.7;font-style:italic;color:#2a2a2a;margin:0 0 12px 0;">' + escapeHtml(t) + '</p>';
     }).join('') : '') +
-    '<p style="font-size:14px;font-weight:bold;color:#4A5240;margin:0;">— Matthieu, Coach Rijal Fit</p>' +
+    '<p style="font-size:14px;font-weight:bold;color:#1f3d2f;margin:0;">— Matthieu, Coach Rijal Fit</p>' +
     '</div>' +
-    '<div style="background:#4A5240;border-radius:8px;padding:28px 20px;margin-top:26px;text-align:center;">' +
+    '<div style="background:#1f3d2f;border-radius:8px;padding:28px 20px;margin-top:26px;text-align:center;">' +
     '<div style="font-size:24px;font-weight:bold;color:#ffffff;margin-bottom:8px;">On en parle ?</div>' +
     '<div style="font-size:15px;line-height:1.6;color:#d1cfc9;margin-bottom:18px;">Un appel découverte de 30 minutes, offert, pour regarder ta situation précise. Sans pression.</div>' +
     '<a href="' + CALENDLY_URL + '" style="display:inline-block;background:#C9A84C;color:#1A1A1A;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 26px;border-radius:6px;">Réserver mon appel découverte</a>' +
