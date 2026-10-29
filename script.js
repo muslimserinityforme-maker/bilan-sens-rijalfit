@@ -401,7 +401,20 @@
       spirituelle: santes[3].pct,
       santeBasse: priority ? priority.label : 'Aucune',
       problemeN1: topIndex >= 0 ? QUESTIONS[topIndex].short : 'Aucun',
-      sante: santes.map((s) => ({ label: s.label, pct: s.pct, text: s.texts[s.tier] })),
+      // Tout ce qui s'affiche sur la page, pour que l'email soit le même retour.
+      tagline: zone.tagline,
+      zoneColor: zone.color,
+      message: zone.message,
+      problemText: topIndex >= 0 ? QUESTIONS[topIndex].problemText : '',
+      videoUrl: VIDEOS[zone.key] || '',
+      sante: santes.map((s) => ({
+        label: s.label,
+        question: s.question || '',
+        pct: s.pct,
+        tier: s.tier,
+        priority: !!(priority && priority.key === s.key),
+        text: s.texts[s.tier],
+      })),
     });
 
     renderResult(zone, santes, priority, topIndex);

@@ -83,9 +83,17 @@ module.exports = async (req, res) => {
       spirituelle: pct(data.spirituelle),
       santeBasse: text(data.santeBasse, 40),
       problemeN1: text(data.problemeN1, 40),
+      tagline: text(data.tagline, 300),
+      zoneColor: /^#[0-9a-fA-F]{6}$/.test(data.zoneColor) ? data.zoneColor : '#4A5240',
+      message: text(data.message, 1200),
+      problemText: text(data.problemText, 800),
+      videoUrl: /^https:\/\//.test(data.videoUrl) ? text(data.videoUrl, 300) : '',
       sante: (Array.isArray(data.sante) ? data.sante : []).slice(0, 4).map((s) => ({
         label: text(s && s.label, 40),
+        question: text(s && s.question, 120),
         pct: pct(s && s.pct),
+        tier: ['haut', 'moyen', 'bas'].includes(s && s.tier) ? s.tier : 'moyen',
+        priority: !!(s && s.priority),
         text: text(s && s.text, 400),
       })),
     });
