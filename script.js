@@ -21,7 +21,7 @@
         "Variable. Certains jours bons, d'autres lourds.",
         "Vidé. Je traîne dès le matin, même après une nuit complète.",
       ],
-      problemText: "Ton problème n°1, c'est ton énergie. Tu te lèves déjà vidé, et un corps sans énergie a du mal à se lever pour Fajr avec présence. Ce n'est pas de la paresse : c'est un signal que ton corps t'envoie, et ça se retravaille.",
+      problemText: "Ce qui pèse le plus ici, c'est ton énergie. Tu te lèves déjà vidé, et un corps sans énergie a du mal à se lever pour Fajr avec présence. Ce n'est pas de la paresse : c'est un signal que ton corps t'envoie, et ça se retravaille.",
     },
     {
       sante: 'sociale', short: 'Vie sociale',
@@ -34,7 +34,7 @@
         "Je décline plus souvent qu'avant, par fatigue.",
         "Je m'isole, je n'ai plus l'énergie d'y aller.",
       ],
-      problemText: "Ton problème n°1, c'est l'énergie que tu as pour les autres. Ce n'est pas de la distance : c'est la fatigue qui te coupe de ceux qui comptent. Ça se retravaille, et c'est souvent le premier signe qui revient quand le corps va mieux.",
+      problemText: "Ce qui pèse le plus ici, c'est l'énergie que tu as pour les autres. Ce n'est pas de la distance : c'est la fatigue qui te coupe de ceux qui comptent. Ça se retravaille, et c'est souvent le premier signe qui revient quand le corps va mieux.",
     },
     {
       sante: 'physique', short: 'Ventre',
@@ -47,7 +47,7 @@
         "Il s'installe doucement, malgré mes efforts.",
         "Visible et tenace, rien ne semble le déloger.",
       ],
-      problemText: "Ton problème n°1, c'est ce poids qui s'installe malgré toi. Ton corps est une amānah : il te parle à travers ce ventre qui ne bouge pas. Il demande surtout qu'on l'écoute, et ça se retravaille.",
+      problemText: "Ce qui pèse le plus ici, c'est ce poids qui s'installe malgré toi. Ton corps est une amānah : il te parle à travers ce ventre qui ne bouge pas. Il demande surtout qu'on l'écoute, et ça se retravaille.",
     },
     {
       sante: 'mentale', short: 'Motivation',
@@ -60,7 +60,7 @@
         "Plus tiède qu'avant. Je me force davantage.",
         "Éteinte. Je n'ai plus le feu d'avant.",
       ],
-      problemText: "Ton problème n°1, c'est ta motivation qui s'essouffle. Le feu qui te faisait avancer, dans ton sport comme dans ta pratique, est plus faible. Ce n'est pas irréversible : un feu se rallume, souvent avec un cadre simple et quelqu'un qui te suit.",
+      problemText: "Ce qui pèse le plus ici, c'est ta motivation qui s'essouffle. Le feu qui te faisait avancer, dans ton sport comme dans ta pratique, est plus faible. Ce n'est pas irréversible : un feu se rallume, souvent avec un cadre simple et quelqu'un qui te suit.",
     },
     {
       sante: 'physique', short: 'Sommeil',
@@ -73,7 +73,7 @@
         "Correct mais haché, je ne me sens pas frais.",
         "Mauvais. Réveils, ruminations, fatigue chronique.",
       ],
-      problemText: "Ton problème n°1, c'est ton sommeil. Sans récupération, rien d'autre ne tient, ni ton corps, ni ta concentration dans la prière. C'est souvent le premier domino à réparer avant tout le reste.",
+      problemText: "Ce qui pèse le plus ici, c'est ton sommeil. Sans récupération, rien d'autre ne tient, ni ton corps, ni ta concentration dans la prière. C'est souvent le premier domino à réparer avant tout le reste.",
     },
     {
       sante: 'sociale', short: 'Famille',
@@ -86,7 +86,7 @@
         "Moins disponible qu'avant, je le sens.",
         "Absent même quand je suis là.",
       ],
-      problemText: "Ton problème n°1, c'est l'énergie que tu as pour les tiens. Quand le corps est fatigué, il en reste moins pour ta famille. Prendre soin de toi, c'est aussi prendre soin d'eux.",
+      problemText: "Ce qui pèse le plus ici, c'est l'énergie que tu as pour les tiens. Quand le corps est fatigué, il en reste moins pour ta famille. Prendre soin de toi, c'est aussi prendre soin d'eux.",
     },
     {
       sante: 'mentale', short: 'Humeur',
@@ -99,7 +99,7 @@
         "Plus irritable, plus à fleur de peau.",
         "Cassant, sombre ou sans énergie souvent.",
       ],
-      problemText: "Ton problème n°1, c'est ton humeur. Quand le corps est épuisé, la patience s'use, et ça se ressent à la maison comme au travail. C'est un ressenti, et ça se retravaille.",
+      problemText: "Ce qui pèse le plus ici, c'est ton humeur. Quand le corps est épuisé, la patience s'use, et ça se ressent à la maison comme au travail. C'est un ressenti, et ça se retravaille.",
     },
     {
       sante: 'spirituelle', short: 'Prière',
@@ -112,7 +112,7 @@
         "L'esprit ailleurs, difficile de me concentrer.",
         "Fatigué, mon corps me distrait de ce que je fais.",
       ],
-      problemText: "Ton problème n°1, c'est ta présence dans la prière. Ton corps fatigué te distrait au moment le plus important de ta journée. C'est exactement pour ça que Rijal Fit existe : relier ton corps à ton adoration, pas les séparer.",
+      problemText: "Ce qui pèse le plus ici, c'est ta présence dans la prière. Ton corps fatigué te distrait au moment le plus important de ta journée. C'est exactement pour ça que Rijal Fit existe : relier ton corps à ton adoration, pas les séparer.",
     },
     {
       sante: 'spirituelle', short: 'Corps et adorations',
@@ -125,7 +125,7 @@
         "Quelques raideurs, douleurs ou coups de fatigue me gênent.",
         "Je raccourcis ou j'évite certaines positions à cause de mon corps.",
       ],
-      problemText: "Ton problème n°1, c'est ton corps dans l'adoration. Raideurs, douleurs ou fatigue te gênent là où tu voudrais être pleinement présent. Ça ne dit rien de ta foi : c'est un corps qui a besoin d'aide, et ça se retravaille.",
+      problemText: "Ce qui pèse le plus ici, c'est ton corps dans l'adoration. Raideurs, douleurs ou fatigue te gênent là où tu voudrais être pleinement présent. Ça ne dit rien de ta foi : c'est un corps qui a besoin d'aide, et ça se retravaille.",
     },
   ];
 
@@ -355,12 +355,16 @@
     return { key, pct, tier, ratio };
   }
 
-  // La question qui a obtenu le plus de points définit le « problème n°1 ».
-  function getTopProblemIndex() {
+  // Ce qui pèse le plus, dans la santé à regarder en premier : la question de
+  // cette santé qui a obtenu le plus de points. Le message du bas de page parle
+  // donc toujours de la même chose que l'étiquette « À regarder en premier ».
+  function getProblemIndex(priority) {
+    if (!priority) return -1;
     let bestIndex = -1;
     let bestValue = 0;
-    answers.forEach((a, i) => {
-      const val = a === null ? 0 : a;
+    QUESTIONS.forEach((q, i) => {
+      if (q.sante !== priority.key) return;
+      const val = answers[i] === null ? 0 : answers[i];
       if (val > bestValue) { bestValue = val; bestIndex = i; }
     });
     return bestIndex;
@@ -380,12 +384,15 @@
     const score = computeScore();
     const zone = getZone(score);
     const santes = SANTES.map((s) => ({ ...s, ...computeSante(s.key) }));
-    const topIndex = getTopProblemIndex();
-
     // La santé à regarder en premier : la plus basse, si elle n'est pas déjà « haute ».
     let lowest = santes[0];
     santes.forEach((s) => { if (s.ratio > lowest.ratio) lowest = s; });
     const priority = lowest.tier === 'haut' ? null : lowest;
+
+    const topIndex = getProblemIndex(priority);
+    const problemText = topIndex >= 0
+      ? `Ce qui ressort de tes réponses : ta ${priority.label.toLowerCase()} (${priority.pct} %) est celle qui demande le plus d'attention. ${QUESTIONS[topIndex].problemText}`
+      : '';
 
     sendLead({
       event: 'result',
@@ -405,7 +412,7 @@
       tagline: zone.tagline,
       zoneColor: zone.color,
       message: zone.message,
-      problemText: topIndex >= 0 ? QUESTIONS[topIndex].problemText : '',
+      problemText,
       videoUrl: VIDEOS[zone.key] || '',
       sante: santes.map((s) => ({
         label: s.label,
@@ -417,10 +424,10 @@
       })),
     });
 
-    renderResult(zone, santes, priority, topIndex);
+    renderResult(zone, santes, priority, problemText);
   }
 
-  function renderResult(zone, santes, priority, topIndex) {
+  function renderResult(zone, santes, priority, problemText) {
     const header = document.getElementById('result-header');
     header.classList.remove('result-header--stable', 'result-header--yoyo', 'result-header--decrochage');
     header.classList.add(`result-header--${zone.key}`);
@@ -458,7 +465,7 @@
     }
 
     document.getElementById('message-zone-text').textContent = zone.message;
-    document.getElementById('message-problem-text').textContent = topIndex >= 0 ? QUESTIONS[topIndex].problemText : '';
+    document.getElementById('message-problem-text').textContent = problemText;
 
     const cta = document.getElementById('cta-calendly');
     cta.href = CALENDLY_URL;
