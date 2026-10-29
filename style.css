@@ -1065,3 +1065,22 @@ input:focus { border-color: var(--or); box-shadow: 0 0 0 3px rgba(201,168,76,.25
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ÉCRANS D'ENTRÉE EN VERT FORÊT — même ambiance que l'espace membre
+   (voile forêt sur la photo, titres crème, reflets or)
+═══════════════════════════════════════════════════════════════ */
+.photo-bg--intro::before, .photo-bg--bio::before, .photo-bg--question::before, .photo-bg--gate::before {
+  background:
+    radial-gradient(ellipse at 85% 0%, rgba(201,168,76,.28), transparent 55%),
+    radial-gradient(rgba(201,168,76,.16) 1.2px, transparent 1.2px) 0 0 / 22px 22px,
+    linear-gradient(160deg, rgba(44,86,66,.9), rgba(20,42,32,.94));
+}
+.photo-bg .eyebrow { color: var(--or-light); }
+.photo-bg .hero-tagline { color: #e9e4d0; }
+.photo-bg .hero-title, .photo-bg .question-title { color: var(--creme); }
+.photo-bg .hero-title em { background: linear-gradient(90deg, var(--or-light), var(--or), var(--or-light)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.photo-bg .hero-source, .photo-bg .hero-sub, .photo-bg .question-sub { color: #d9d3bf; }
+.photo-bg .hero-reassurance { color: #b9bfae; }
+.photo-bg .stat__label { color: #b9bfae; }
+.photo-bg .btn--ghost, .photo-bg .btn--secondary { color: var(--creme); border-color: rgba(201,168,76,.7); }
