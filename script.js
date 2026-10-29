@@ -792,7 +792,7 @@
 
   const ALIMENTAIRE_BASE = {
     ventre: [
-      "Réduis en priorité le sucre rapide et l'alcool (même occasionnel) — c'est ce qui pèse le plus sur le stockage abdominal.",
+      "Réduis en priorité le sucre rapide et les boissons sucrées (sodas, jus) — c'est ce qui pèse le plus sur le stockage abdominal.",
       "Mange lentement et jusqu'à 80% de satiété — le ventre est la zone la plus sensible aux repas pris trop vite.",
       "Priorise les fibres (légumes, légumineuses) à chaque repas — elles limitent directement le stockage viscéral.",
     ],
