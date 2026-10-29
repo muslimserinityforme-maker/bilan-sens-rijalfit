@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bilan Sens — Rijal Fit</title>
-  <meta name="description" content="Quelques questions honnêtes. Découvre où tu en es réellement — énergie, discipline, sommeil, prière. Sans jugement, sans jargon." />
+  <title>Ton Bilan Santé — Rijal Fit</title>
+  <meta name="description" content="9 questions, 2 minutes. Fais le point sur tes 4 santés : physique, mentale, sociale, spirituelle. Sans jugement, sans jargon." />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bilan-sens-rijalfit.vercel.app/" />
-  <meta property="og:title" content="Bilan Sens — Rijal Fit" />
-  <meta property="og:description" content="Quelques questions honnêtes. Découvre où tu en es réellement — énergie, discipline, sommeil, prière. Sans jugement, sans jargon." />
+  <meta property="og:title" content="Ton Bilan Santé — Rijal Fit" />
+  <meta property="og:description" content="9 questions, 2 minutes. Fais le point sur tes 4 santés : physique, mentale, sociale, spirituelle. Sans jugement, sans jargon." />
   <meta property="og:image" content="https://bilan-sens-rijalfit.vercel.app/images/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Bilan Sens — Rijal Fit" />
-  <meta name="twitter:description" content="Quelques questions honnêtes. Découvre où tu en es réellement — énergie, discipline, sommeil, prière. Sans jugement, sans jargon." />
+  <meta name="twitter:title" content="Ton Bilan Santé — Rijal Fit" />
+  <meta name="twitter:description" content="9 questions, 2 minutes. Fais le point sur tes 4 santés : physique, mentale, sociale, spirituelle. Sans jugement, sans jargon." />
   <meta name="twitter:image" content="https://bilan-sens-rijalfit.vercel.app/images/og-image.jpg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,338 +29,56 @@
   <div class="topbar">
     <button type="button" id="quit-btn" class="topbar__quit">× Quitter</button>
     <div class="topbar__progress"><div id="progress-fill" class="topbar__progress-fill"></div></div>
-    <div id="topbar-count" class="topbar__count">0 / 10</div>
+    <div id="topbar-count" class="topbar__count">0 / 9</div>
   </div>
 
   <main class="container">
 
     <!-- ═══ ÉCRAN 0 — Intro ═══ -->
     <section id="screen-intro" class="screen photo-bg photo-bg--intro">
-      <p class="eyebrow">Rijal Fit · Bilan Sens</p>
-      <p class="hero-tagline">Donne du sens à ta santé avant le programme.</p>
+      <p class="eyebrow">Rijal Fit · Ton Bilan Santé</p>
+      <p class="hero-tagline">Fais le point sur tes 4 santés : physique, mentale, sociale, spirituelle.</p>
       <h1 class="hero-title">« Ton corps a un droit sur toi. »</h1>
-      <p class="hero-sub">Ce bilan est un point de départ vers ce qui compte profondément pour toi. Ton corps t'envoie des signaux sur ton état de santé, et ce bilan met des mots justes sur ce que tu vis en silence.</p>
-      <button type="button" id="start-btn" class="btn btn--primary btn--large">Lancer le diagnostic →</button>
+      <p class="hero-sub">9 questions simples, sans jargon. Tu vois où tu en es dans chacune de tes 4 santés, et je te laisse un message personnel à la fin.</p>
+      <button type="button" id="start-btn" class="btn btn--primary btn--large">Commencer mon bilan →</button>
       <p class="hero-reassurance">≈ 2 minutes · Gratuit · Confidentiel</p>
       <div class="stats-row">
-        <div class="stat"><span class="stat__num">10</span><span class="stat__label">questions ciblées</span></div>
-        <div class="stat"><span class="stat__num">3</span><span class="stat__label">profils précis</span></div>
+        <div class="stat"><span class="stat__num">9</span><span class="stat__label">questions</span></div>
+        <div class="stat"><span class="stat__num">4</span><span class="stat__label">santés</span></div>
         <div class="stat"><span class="stat__num">100%</span><span class="stat__label">sans jargon</span></div>
       </div>
     </section>
 
-    <!-- ═══ ÉCRAN — Profil de base (confidentiel) ═══ -->
-    <section id="screen-bio" class="screen photo-bg photo-bg--bio" hidden>
+    <!-- ═══ ÉCRAN — Départ : prénom, email, âge ═══ -->
+    <section id="screen-depart" class="screen photo-bg photo-bg--bio" hidden>
       <p class="eyebrow">Avant de commencer</p>
-      <h2 class="question-title">Tes informations restent strictement confidentielles.</h2>
-      <p class="question-sub">Elles servent uniquement à construire ton profil — jamais partagées, jamais publiées.</p>
-      <div class="bio-fields">
-        <div class="field">
-          <label for="b-age">Âge *</label>
-          <input type="number" id="b-age" name="age" min="14" max="100" required />
-        </div>
-        <div class="field">
-          <label for="b-taille">Taille (cm) *</label>
-          <input type="number" id="b-taille" name="taille" min="120" max="230" required />
-        </div>
-        <div class="field">
-          <label for="b-poids">Poids (kg) *</label>
-          <input type="number" id="b-poids" name="poids" min="35" max="250" required />
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="b-activite">Niveau d'activité physique *</label>
-          <select id="b-activite" name="activite" required>
-            <option value="sédentaire">Sédentaire — bureau/écran, peu de mouvement</option>
-            <option value="modéré">Modéré — je bouge un peu</option>
-            <option value="actif">Actif — métier physique ou sport régulier</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="b-objectif">Ton objectif corporel *</label>
-          <select id="b-objectif" name="objectif" required>
-            <option value="perte de graisse">Perdre du gras</option>
-            <option value="prise de muscle">Prendre du muscle</option>
-            <option value="recomposition">Les deux (recomposition)</option>
-            <option value="maintien">Me maintenir / stabiliser</option>
-          </select>
-        </div>
-      </div>
-      <button type="button" id="bio-continue-btn" class="btn btn--primary btn--large">Continuer →</button>
-      <p id="bio-error" class="form-error" role="alert" hidden></p>
-    </section>
+      <h2 class="question-title">Comment on t'appelle ?</h2>
+      <p class="question-sub">Pour t'envoyer ton bilan par email. Rien d'autre à remplir.</p>
 
-    <!-- ═══ ÉCRAN — Analyse sans photo (morphologie) ═══ -->
-    <section id="screen-morpho" class="screen photo-bg photo-bg--bio" hidden>
-      <p class="eyebrow">Analyse sans photo</p>
-      <h2 class="question-title">On construit ton profil morphologique.</h2>
-      <p class="question-sub">Pas besoin de photo — quelques mesures et observations suffisent pour une analyse fiable.</p>
-
-      <h3 class="morpho-axis-title">Tes mensurations (au mètre ruban, en cm)</h3>
-      <div class="bio-fields">
+      <form id="depart-form" novalidate>
         <div class="field">
-          <label for="m-taille-t">Tour de taille *</label>
-          <input type="number" id="m-taille-t" name="tour_taille" min="40" max="200" required />
+          <label for="d-prenom">Prénom ou surnom *</label>
+          <input type="text" id="d-prenom" name="prenom" required autocomplete="given-name" />
         </div>
-        <div class="field">
-          <label for="m-hanches">Tour de hanches *</label>
-          <input type="number" id="m-hanches" name="tour_hanches" min="40" max="200" required />
+        <div class="field-row">
+          <div class="field">
+            <label for="d-email">Email *</label>
+            <input type="email" id="d-email" name="email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="d-age">Âge</label>
+            <input type="number" id="d-age" name="age" min="14" max="100" inputmode="numeric" />
+          </div>
         </div>
-        <div class="field">
-          <label for="m-cuisse">Tour de cuisse *</label>
-          <input type="number" id="m-cuisse" name="tour_cuisse" min="20" max="100" required />
+        <div class="field field--checkbox">
+          <label>
+            <input type="checkbox" id="d-consent" name="consent" required />
+            J'accepte de recevoir mon bilan par email et des conseils de Rijal Fit. Je peux me désinscrire à tout moment. *
+          </label>
         </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-bras">Tour de bras (plié) *</label>
-          <input type="number" id="m-bras" name="tour_bras" min="10" max="70" required />
-        </div>
-        <div class="field">
-          <label for="m-poitrine">Tour de poitrine *</label>
-          <input type="number" id="m-poitrine" name="tour_poitrine" min="40" max="200" required />
-        </div>
-      </div>
-      <button type="button" id="skip-measures-btn" class="skip-link">Passer cette étape</button>
-
-      <h3 id="morpho-miroir-title" class="morpho-axis-title">Devant un miroir, bras le long du corps</h3>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-bras-jambes">Tes bras comparés à tes jambes *</label>
-          <select id="m-bras-jambes" name="bras_jambes" required>
-            <option value="plus_grand">Plus grands</option>
-            <option value="identique" selected>À peu près pareil</option>
-            <option value="plus_petit">Plus petits</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-buste-jambes">Ton buste comparé à tes jambes *</label>
-          <select id="m-buste-jambes" name="buste_jambes" required>
-            <option value="plus_long">Plus long</option>
-            <option value="identique" selected>À peu près pareil</option>
-            <option value="plus_court">Plus court</option>
-          </select>
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-clavicules">Tes clavicules comparées à tes hanches *</label>
-          <select id="m-clavicules" name="clavicules_hanches" required>
-            <option value="plus_larges">Plus larges</option>
-            <option value="moyenne" selected>Moyennes</option>
-            <option value="plus_petites">Plus petites</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-cage">Ta cage thoracique comparée à tes hanches *</label>
-          <select id="m-cage" name="cage_hanches" required>
-            <option value="plus_large">Plus large</option>
-            <option value="moyenne" selected>Moyenne</option>
-            <option value="plus_courte">Plus courte</option>
-          </select>
-        </div>
-      </div>
-
-      <h3 class="morpho-axis-title">Morphologie détaillée (pour le choix de tes exercices)</h3>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-valgus">Bras tendus devant toi, coudes vers l'intérieur : tes avant-bras s'écartent... *</label>
-          <select id="m-valgus" name="valgus" required>
-            <option value="leger">Légèrement (léger valgus)</option>
-            <option value="prononce">Nettement, en V marqué (valgus prononcé)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-bassin">Ton bassin, tu le décrirais comme *</label>
-          <select id="m-bassin" name="bassin" required>
-            <option value="large">Large</option>
-            <option value="moyen" selected>Moyen</option>
-            <option value="etroit">Étroit</option>
-          </select>
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-abdomen">La distance entre le bas de tes côtes et le haut de ton bassin te semble *</label>
-          <select id="m-abdomen" name="abdomen" required>
-            <option value="long">Longue</option>
-            <option value="moyen" selected>Moyenne</option>
-            <option value="court">Courte</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-femur">Assis sur une chaise standard, tes cuisses (fémurs) te semblent *</label>
-          <select id="m-femur" name="femur" required>
-            <option value="long">Longues</option>
-            <option value="moyen" selected>Moyennes</option>
-            <option value="court">Courtes</option>
-          </select>
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-tibia">Comparés à tes cuisses, tes tibias (entre genou et cheville) te semblent *</label>
-          <select id="m-tibia" name="tibia" required>
-            <option value="long">Longs</option>
-            <option value="moyen" selected>Moyens</option>
-            <option value="court">Courts</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-calcaneum">Ton talon (la partie osseuse qui dépasse derrière la cheville) te semble *</label>
-          <select id="m-calcaneum" name="calcaneum" required>
-            <option value="long">Long, très saillant</option>
-            <option value="moyen" selected>Moyen</option>
-            <option value="court">Court, peu marqué</option>
-          </select>
-        </div>
-      </div>
-
-      <h3 class="morpho-axis-title">Ton corps au quotidien</h3>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-stockage">Où stockes-tu principalement ta graisse ? *</label>
-          <select id="m-stockage" name="stockage_graisse" required>
-            <option value="ventre">Ventre</option>
-            <option value="hanches">Hanches</option>
-            <option value="cuisses">Cuisses</option>
-            <option value="bras">Bras</option>
-            <option value="dos">Dos</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-ventre-texture">Ton ventre est plutôt *</label>
-          <select id="m-ventre-texture" name="ventre_texture" required>
-            <option value="dur">Dur</option>
-            <option value="mou">Mou</option>
-          </select>
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-posture">Ta posture, tu la sens *</label>
-          <select id="m-posture" name="posture" required>
-            <option value="voutee">Voûtée</option>
-            <option value="cambree">Cambrée</option>
-            <option value="droite">Droite</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-douleurs">Douleurs articulaires *</label>
-          <select id="m-douleurs" name="douleurs_articulaires" required>
-            <option value="aucune">Aucune</option>
-            <option value="genoux">Genoux</option>
-            <option value="dos">Dos / lombaires</option>
-            <option value="epaules">Épaules</option>
-            <option value="hanches">Hanches</option>
-            <option value="poignets">Poignets</option>
-          </select>
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-cellulite">Zones de cellulite *</label>
-          <select id="m-cellulite" name="cellulite" required>
-            <option value="marquee">Oui, marquées</option>
-            <option value="leger">Un peu</option>
-            <option value="non">Non</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-ventre-soir">Ton ventre est plus gonflé le soir que le matin ? *</label>
-          <select id="m-ventre-soir" name="ventre_soir" required>
-            <option value="oui">Oui, nettement</option>
-            <option value="leger">Un peu</option>
-            <option value="non">Non</option>
-          </select>
-        </div>
-      </div>
-
-      <h3 class="morpho-axis-title">Test de mobilité (auto-évalué)</h3>
-      <div class="bio-fields">
-        <div class="field">
-          <label for="m-orteils">Toucher ses orteils, jambes tendues *</label>
-          <select id="m-orteils" name="mobilite_orteils" required>
-            <option value="facile">Facile</option>
-            <option value="moyen">Moyen</option>
-            <option value="difficile">Difficile</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-accroupir">S'accroupir, talons au sol *</label>
-          <select id="m-accroupir" name="mobilite_accroupir" required>
-            <option value="facile">Facile</option>
-            <option value="moyen">Moyen</option>
-            <option value="difficile">Difficile</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-bras-tete">Bras au-dessus de la tête sans cambrer *</label>
-          <select id="m-bras-tete" name="mobilite_bras" required>
-            <option value="facile">Facile</option>
-            <option value="moyen">Moyen</option>
-            <option value="difficile">Difficile</option>
-          </select>
-        </div>
-      </div>
-
-      <h3 class="morpho-axis-title">Ta manière de fonctionner</h3>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-psy1">Quand tu commences un nouveau projet, qu'est-ce qui te fait le plus avancer ? *</label>
-          <select id="m-psy1" name="psy1" required>
-            <option value="">—</option>
-            <option value="empathique">Sentir que je progresse avec des gens qui me comprennent et m'encouragent</option>
-            <option value="perseverant">Savoir que je reste fidèle à mes valeurs et à ce en quoi je crois</option>
-            <option value="travaillomane">Avoir un plan clair et bien organisé, avec des objectifs précis</option>
-            <option value="promoteur">Saisir l'opportunité et passer à l'action tout de suite</option>
-            <option value="reveur">Avoir du temps pour moi et visualiser où je veux arriver</option>
-            <option value="rebelle">Que ce soit vivant, spontané, sans trop de contraintes</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-psy2">Face à un imprévu ou une contrariété, tu as plutôt tendance à... *</label>
-          <select id="m-psy2" name="psy2" required>
-            <option value="">—</option>
-            <option value="empathique">Ressentir fort l'émotion, parfois avant même de comprendre ce qui se passe</option>
-            <option value="perseverant">Te braquer si ça touche à tes principes ou à ce en quoi tu crois</option>
-            <option value="travaillomane">Être stressé(e) parce que ça dérègle ton organisation</option>
-            <option value="promoteur">Chercher tout de suite une solution ou une opportunité à saisir</option>
-            <option value="reveur">Te retirer un peu, prendre du recul dans ta tête</option>
-            <option value="rebelle">Relativiser vite, voire en rire pour dédramatiser</option>
-          </select>
-        </div>
-      </div>
-      <div class="bio-fields bio-fields--2">
-        <div class="field">
-          <label for="m-psy3">Dans un groupe (famille, travail, communauté), on dirait souvent de toi que... *</label>
-          <select id="m-psy3" name="psy3" required>
-            <option value="">—</option>
-            <option value="empathique">Tu es celui/celle qui prend soin des autres et sent l'ambiance</option>
-            <option value="perseverant">Tu es droit(e) dans tes valeurs, parfois perçu(e) comme strict(e)</option>
-            <option value="travaillomane">Tu es hyper organisé(e) et tu fais attention au temps</option>
-            <option value="promoteur">Tu es celui/celle qui ose et qui passe à l'action</option>
-            <option value="reveur">Tu es discret(e), plus à l'aise seul(e) qu'en groupe</option>
-            <option value="rebelle">Tu mets de l'ambiance et tu aimes que ce soit léger</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="m-psy4">Quand quelqu'un te fait une remarque, tu préfères qu'on... *</label>
-          <select id="m-psy4" name="psy4" required>
-            <option value="">—</option>
-            <option value="empathique">Le fasse avec douceur, en pensant à comment tu vas le vivre</option>
-            <option value="perseverant">Soit honnête et précis, même si c'est direct</option>
-            <option value="travaillomane">Explique clairement ce qui ne va pas et ce qu'il faut corriger</option>
-            <option value="promoteur">Aille droit au but pour que tu puisses agir tout de suite</option>
-            <option value="reveur">Te laisse un peu de temps pour y réfléchir avant d'en reparler</option>
-            <option value="rebelle">Reste léger, sans trop insister ni te mettre la pression</option>
-          </select>
-        </div>
-      </div>
-
-      <button type="button" id="morpho-continue-btn" class="btn btn--primary btn--large">Continuer →</button>
-      <p id="morpho-error" class="form-error" role="alert" hidden></p>
+        <button type="submit" class="btn btn--primary btn--large">Commencer le bilan →</button>
+        <p id="depart-error" class="form-error" role="alert" hidden></p>
+      </form>
     </section>
 
     <!-- ═══ ÉCRANS QUESTIONS (générés en JS) ═══ -->
@@ -375,55 +93,7 @@
       </div>
     </section>
 
-    <!-- ═══ ÉCRAN — Teaser + porte d'entrée ═══ -->
-    <section id="screen-gate" class="screen photo-bg photo-bg--gate" hidden>
-      <p id="gate-badge" class="badge"></p>
-      <h2 class="gate-title">Ton profil : <em id="gate-zone-name"></em>.</h2>
-      <p class="gate-sub" id="gate-zone-tagline"></p>
-
-      <div class="reveal-box">
-        <p class="reveal-box__label">Ce que tu vas découvrir</p>
-        <ul class="reveal-box__list">
-          <li>Pourquoi ta situation en est là — et ce qui peut la faire basculer</li>
-          <li>Les 4 marqueurs à surveiller (énergie, discipline, sommeil, prière)</li>
-          <li>Ta trajectoire probable sous 12 mois si rien ne change</li>
-          <li>Le message personnel du coach pour ton profil précis</li>
-        </ul>
-      </div>
-
-      <form id="gate-form" novalidate>
-        <div class="field-row">
-          <div class="field">
-            <label for="g-prenom">Prénom *</label>
-            <input type="text" id="g-prenom" name="prenom" required />
-          </div>
-          <div class="field">
-            <label for="g-nom">Nom *</label>
-            <input type="text" id="g-nom" name="nom" required />
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="g-email">Email *</label>
-            <input type="email" id="g-email" name="email" required />
-          </div>
-          <div class="field">
-            <label for="g-telephone">Téléphone *</label>
-            <input type="tel" id="g-telephone" name="telephone" required />
-          </div>
-        </div>
-        <div class="field field--checkbox">
-          <label>
-            <input type="checkbox" id="g-consent" name="consent" required />
-            J'accepte que ces informations soient utilisées pour me montrer mon profil et pour être recontacté à ce sujet. *
-          </label>
-        </div>
-        <button type="submit" class="btn btn--primary btn--large">Voir mon profil complet →</button>
-        <p id="gate-error" class="form-error" role="alert" hidden></p>
-      </form>
-    </section>
-
-    <!-- ═══ ÉCRAN — Profil complet ═══ -->
+    <!-- ═══ ÉCRAN — Résultat ═══ -->
     <section id="screen-result" class="screen" hidden>
 
       <header class="result-header" id="result-header">
@@ -431,111 +101,18 @@
         <p class="result-header__hello" id="result-hello"></p>
         <h1 class="result-header__title" id="result-zone-name"></h1>
         <p class="result-header__tagline" id="result-zone-tagline"></p>
-        <p class="result-header__score"><span id="result-score"></span> <span class="result-header__score-max">/ 18 points cumulés</span></p>
-        <p class="result-header__bio" id="result-bio"></p>
       </header>
 
-      <section class="zones-section">
-        <p class="eyebrow">Où tu te situes</p>
-        <h2 class="section-title">Trois profils. Un seul est le tien aujourd'hui.</h2>
-        <div class="zones-grid" id="zones-grid"></div>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Ta fiche</p>
-        <h2 class="section-title">Indice de masse corporelle (IMC)</h2>
-        <div class="fiche-card">
-          <div class="fiche-rows" id="fiche-imc-rows"></div>
-          <div class="gauge" id="gauge-imc"></div>
-        </div>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Ton morphotype</p>
-        <h2 class="section-title">Le plus probable selon ton profil</h2>
-        <div class="fiche-card morphotype-card">
-          <img id="morphotype-img" class="morphotype-img" alt="" />
-          <div class="morphotype-body">
-            <h3 id="morphotype-name" class="morphotype-name"></h3>
-            <p id="morphotype-text" class="fiche-intro"></p>
-          </div>
-        </div>
-        <p class="fiche-caption">Une orientation à partir de ton IMC et de ton niveau d'activité — pas un diagnostic médical.</p>
-      </section>
-
-      <section class="chart-section">
-        <p class="eyebrow">La trajectoire de ta vie</p>
-        <h2 class="section-title">Tes marqueurs — aujourd'hui et si rien ne change</h2>
-        <p class="chart-intro">Énergie qui baisse, prières qui se décalent, discipline qui lâche — chaque marqueur en entraîne un autre. Voici la trajectoire si rien ne change.</p>
-        <div class="chart-card">
-          <div class="chart-legend" id="chart-legend"></div>
-          <div id="chart-container"></div>
-          <p class="chart-caption">Lecture : en abscisse, les 12 prochains mois si rien ne change (aujourd'hui → +3 → +6 → +9 → +12 mois) ; en ordonnée, un score sur 3 pour chaque marqueur (3 = au top, 0 = décroché), basé sur ta réponse du jour. Sans rien changer, la tendance est à la baisse : ce qui va bien aujourd'hui peut se fragiliser dans les prochains mois.</p>
-        </div>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Ton taux de graisse estimé</p>
-        <h2 class="section-title">Une fourchette, pas un chiffre gravé dans le marbre</h2>
-        <p class="fiche-intro" id="bodyfat-range-text"></p>
-        <div class="fiche-card">
-          <div class="gauge" id="gauge-bodyfat"></div>
-        </div>
-        <p class="fiche-intro" id="bodyfat-explain"></p>
-        <p class="fiche-caption">Estimation par formule reconnue (Deurenberg), pas une mesure clinique (DEXA, impédancemétrie).</p>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Ta fiche</p>
-        <h2 class="section-title">Composition &amp; besoins</h2>
-        <div class="fiche-card">
-          <div class="fiche-rows" id="fiche-composition-rows"></div>
-        </div>
-        <p class="fiche-caption">Formules Deurenberg (masse grasse/maigre) et Katch-McArdle (métabolisme) — des estimations, pas une mesure clinique.</p>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Ton type de ventre</p>
-        <h2 class="section-title">Le plus probable selon tes réponses</h2>
-        <div class="bellytype-grid" id="bellytype-grid"></div>
-        <p class="fiche-caption">Une orientation à partir de tes réponses — pas un diagnostic médical.</p>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Ta projection</p>
-        <h2 class="section-title">Départ vs. dans 3 mois, si tu tiens le cap</h2>
-        <p class="fiche-intro" id="projection-intro"></p>
-        <div class="fiche-card">
-          <div class="fiche-rows" id="projection-rows"></div>
-          <div class="projection-bars" id="projection-bars"></div>
-        </div>
-        <p class="fiche-caption">Projection indicative sur 3 mois si tu respectes l'objectif calorique ci-dessus — pas une garantie, un cap réaliste selon ton profil.</p>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Analyse complète</p>
-        <h2 class="section-title">Ce que tes réponses révèlent, domaine par domaine</h2>
-        <div class="analysis-grid" id="analysis-grid"></div>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">Analyse hormonale</p>
-        <h2 class="section-title" id="hormonal-title"></h2>
-        <p class="fiche-intro" id="hormonal-text"></p>
-        <p class="fiche-caption">Des signaux indirects à partir de tes réponses — pas un dosage sanguin.</p>
-      </section>
-
-      <section class="fiche-section">
-        <p class="eyebrow">À éviter pour l'instant</p>
-        <h2 class="section-title">Exercices déconseillés vu ta morphologie</h2>
-        <div id="avoid-groups" class="avoid-groups"></div>
-        <p id="avoid-signature" class="fiche-caption avoid-signature"></p>
-        <p class="fiche-caption">Analyse morpho-anatomique indicative à partir de tes réponses — pas un bilan en présentiel avec un coach.</p>
+      <section class="sante-section">
+        <p class="eyebrow">Tes 4 santés</p>
+        <h2 class="section-title">Tu as le sentiment d'être en bonne santé ? Mais est-ce que tu l'es vraiment ?</h2>
+        <div class="sante-bars" id="sante-bars"></div>
+        <p class="sante-honesty">Ce bilan repose sur tes réponses, donc sur ton ressenti. Il t'aide à regarder plus précisément. Pour être sûr de ton état de santé, seul un bilan médical le dit.</p>
       </section>
 
       <section class="message-section">
-        <p class="eyebrow">Ton Bilan de Sens personnalisé</p>
-        <h2 class="section-title">Voilà pourquoi faire ce bilan a du sens :</h2>
+        <p class="eyebrow">Ton message personnel</p>
+        <div class="result-video" id="result-video" hidden></div>
         <div class="message-card">
           <img src="images/matt.jpg" alt="Matthieu — Coach Rijal Fit" class="message-card__photo" />
           <div class="message-card__body">
@@ -547,9 +124,10 @@
       </section>
 
       <section class="cta-final">
-        <h2 class="cta-final__title">Prêt à commencer<br>ton réalignement ?</h2>
-        <p class="cta-final__sub">Un appel de 30 min avec mon équipe. On regarde ta situation précise, sans pression.</p>
-        <a href="https://calendly.com/muslimserinityforme/programme-ton-bilan-intermediaire" target="_blank" rel="noopener" class="btn btn--primary btn--large">Réserver mon appel découverte</a>
+        <h2 class="cta-final__title">On en parle ?</h2>
+        <p class="cta-final__sub">Un appel découverte de 30 minutes, offert, pour regarder ta situation précise. Sans pression. Et tu retrouves mes conseils gratuits sur Instagram et YouTube.</p>
+        <a id="cta-calendly" href="#" target="_blank" rel="noopener" class="btn btn--primary btn--large">Réserver mon appel découverte</a>
+        <a id="cta-whatsapp" href="#" target="_blank" rel="noopener" class="btn btn--secondary btn--large" hidden>Écrire sur WhatsApp</a>
         <p class="cta-final__reassurance">Gratuit · 30 min · Sans engagement</p>
       </section>
 

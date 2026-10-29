@@ -1,10 +1,11 @@
-// Le diagnostic est maintenant un quiz scoré côté client (pas d'appel Claude,
-// pas de PDF) — cette fonction ne sert qu'à journaliser le lead (nom/prénom/
-// email/téléphone/score/zone) une fois le quiz terminé, avant d'afficher le
-// résultat. Beaucoup plus simple et fiable que l'ancienne génération IA.
+// "Ton Bilan Santé" journalise la personne en deux temps :
+//  - event "start"  : dès qu'elle donne prénom + email (même si elle abandonne ensuite) ;
+//  - event "result" : à la fin du bilan, avec ses 4 pourcentages.
+// Aucune IA, aucun PDF : cette fonction ne fait que nettoyer les champs
+// reçus et les transmettre au script Google Apps (Sheet + email).
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_MAX = 60;
 const rateLimitStore = new Map();
 
 function isRateLimited(ip) {
@@ -24,6 +25,12 @@ function getClientIp(req) {
   if (forwarded) return String(forwarded).split(',')[0].trim();
   return (req.socket && req.socket.remoteAddress) || 'unknown';
 }
+
+const text = (value, max) => (value == null ? '' : String(value).slice(0, max));
+const pct = (value) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n))) : null;
+};
 
 async function logLeadToSheet(lead) {
   if (!process.env.GOOGLE_SHEETS_WEBHOOK_URL) return;
@@ -51,62 +58,40 @@ module.exports = async (req, res) => {
   }
 
   const data = req.body || {};
-  if (!data.prenom || !data.nom || !data.email || !data.telephone) {
-    res.status(400).json({ error: 'Champs manquants.' });
+  const email = text(data.email, 120).trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    res.status(400).json({ error: 'Email invalide.' });
     return;
   }
 
+  const age = Number(data.age);
   const lead = {
-    date: data.date || new Date().toISOString(),
-    prenom: data.prenom,
-    nom: data.nom,
-    email: data.email,
-    telephone: data.telephone,
-    age: data.age,
-    taille: data.taille,
-    poids: data.poids,
-    activite: data.activite,
-    objectif: data.objectif,
-    imc: data.imc,
-    score: data.score,
-    zone: data.zone,
-    contexteProSignal: data.contexteProSignal,
-    // Analyse sans photo — mensurations et observations
-    tourTaille: data.tourTaille,
-    tourHanches: data.tourHanches,
-    tourCuisse: data.tourCuisse,
-    tourBras: data.tourBras,
-    tourPoitrine: data.tourPoitrine,
-    brasJambes: data.brasJambes,
-    busteJambes: data.busteJambes,
-    claviculesHanches: data.claviculesHanches,
-    cageHanches: data.cageHanches,
-    valgus: data.valgus,
-    bassin: data.bassin,
-    abdomen: data.abdomen,
-    femur: data.femur,
-    tibia: data.tibia,
-    calcaneum: data.calcaneum,
-    stockageGraisse: data.stockageGraisse,
-    ventreTexture: data.ventreTexture,
-    posture: data.posture,
-    douleursArticulaires: data.douleursArticulaires,
-    cellulite: data.cellulite,
-    ventreSoir: data.ventreSoir,
-    mobiliteOrteils: data.mobiliteOrteils,
-    mobiliteAccroupir: data.mobiliteAccroupir,
-    mobiliteBras: data.mobiliteBras,
-    // Synthèse de l'analyse (Sheet + email)
-    morphotype: data.morphotype,
-    typeVentre: data.typeVentre,
-    hormonalTitre: data.hormonalTitre,
-    // Profil psychologique — usage interne coach uniquement
-    profilBase: data.profilBase,
-    profilPhase: data.profilPhase,
-    orientationVente: data.orientationVente,
+    event: data.event === 'result' ? 'result' : 'start',
+    date: text(data.date, 40) || new Date().toISOString(),
+    prenom: text(data.prenom, 60).trim(),
+    email,
+    age: Number.isFinite(age) && age >= 10 && age <= 110 ? Math.round(age) : null,
   };
 
-  console.log('DIAGNOSTIC_LEAD', JSON.stringify(lead));
+  if (lead.event === 'result') {
+    Object.assign(lead, {
+      score: pct(data.score),
+      zone: text(data.zone, 60),
+      physique: pct(data.physique),
+      mentale: pct(data.mentale),
+      sociale: pct(data.sociale),
+      spirituelle: pct(data.spirituelle),
+      santeBasse: text(data.santeBasse, 40),
+      problemeN1: text(data.problemeN1, 40),
+      sante: (Array.isArray(data.sante) ? data.sante : []).slice(0, 4).map((s) => ({
+        label: text(s && s.label, 40),
+        pct: pct(s && s.pct),
+        text: text(s && s.text, 400),
+      })),
+    });
+  }
+
+  console.log('BILAN_SANTE_LEAD', JSON.stringify({ event: lead.event, zone: lead.zone }));
   await logLeadToSheet(lead);
 
   res.status(200).json({ status: 'ok' });
