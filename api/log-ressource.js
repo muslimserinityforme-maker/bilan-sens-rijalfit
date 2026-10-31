@@ -3,6 +3,8 @@
 // Envoyé comme un event "start" (statut « Démarré ») : le script Google n'a pas à
 // être redéployé. La colonne « Âge » indique la ressource et l'accord pour les conseils.
 
+const { creerLien, FICHIERS } = require('./ressource');
+
 const ORIGINE = 'https://rijal-fit.vercel.app';
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
@@ -55,7 +57,11 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const ressource = text(data.ressource, 40).replace(/^pdf\//, '').replace(/\.pdf$/, '');
+  const ressource = text(data.ressource, 40);
+  if (!Object.prototype.hasOwnProperty.call(FICHIERS, ressource)) {
+    res.status(400).json({ error: 'Ressource inconnue.' });
+    return;
+  }
   const conseils = data.conseils === true ? 'conseils : oui' : 'conseils : non';
 
   if (!process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
@@ -82,5 +88,5 @@ module.exports = async (req, res) => {
     return;
   }
 
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ status: 'ok', url: creerLien(ressource) });
 };
