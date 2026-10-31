@@ -5,7 +5,8 @@
 
 const { creerLien, FICHIERS } = require('./ressource');
 
-const ORIGINE = 'https://rijal-fit.vercel.app';
+// Adresses du site principal autorisées à appeler cette page (l'ancienne reste valable).
+const ORIGINES = ['https://rijal-fit.vercel.app', 'https://landing-3-sepia.vercel.app'];
 
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 const RATE_LIMIT_MAX = 30;
@@ -32,7 +33,9 @@ function getClientIp(req) {
 const text = (value, max) => (value == null ? '' : String(value).slice(0, max));
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', ORIGINE);
+  const origine = ORIGINES.includes(req.headers.origin) ? req.headers.origin : ORIGINES[0];
+  res.setHeader('Access-Control-Allow-Origin', origine);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
